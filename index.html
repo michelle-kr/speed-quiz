@@ -386,7 +386,7 @@ button { -webkit-tap-highlight-color: transparent; }
 }
 
 /* 광고 영역 */
-.ad-placeholder {
+.placeholder {
     width: 360px;
     height: 202px;
     background: rgba(255,255,255,0.02);
@@ -557,7 +557,7 @@ button { -webkit-tap-highlight-color: transparent; }
 }
 
 /* 광고 시청 모달 */
-.ad-modal {
+.replay-modal {
     position: absolute;
     inset: 0;
     display: none;
@@ -566,8 +566,8 @@ button { -webkit-tap-highlight-color: transparent; }
     background: rgba(0,0,0,0.3);
     z-index: 29;
 }
-.ad-modal.show { display: flex; }
-.ad-modal-card {
+.replay-modal.show { display: flex; }
+.replay-modal-card {
     position: relative;
     width: 360px;
     height: 202px;
@@ -579,13 +579,13 @@ button { -webkit-tap-highlight-color: transparent; }
     align-items: center;
     justify-content: center;
 }
-.ad-countdown {
+.replay-countdown {
     font-size: 22px;
     font-weight: 800;
     color: #f4f6fa;
     text-align: center;
 }
-.ad-close-btn {
+.replay-close-btn {
     position: absolute;
     top: 8px;
     right: 8px;
@@ -599,7 +599,7 @@ button { -webkit-tap-highlight-color: transparent; }
     cursor: pointer;
     display: none;
 }
-.ad-close-btn.show { display: inline-block; }
+.replay-close-btn.show { display: inline-block; }
 </style>
 </head>
 <body>
@@ -645,7 +645,7 @@ button { -webkit-tap-highlight-color: transparent; }
                 </div>
             </div>
         </div>
-        <div class="ad-placeholder">광고 영역 (360×202)</div>
+        <div class="placeholder">광고 영역 (360×202)</div>
     </div>
 
     <!-- ── 결과 화면 ── -->
@@ -685,10 +685,10 @@ button { -webkit-tap-highlight-color: transparent; }
         </div>
     </div>
 
-    <div id="adModal" class="ad-modal" aria-hidden="true">
-        <div class="ad-modal-card">
-            <button type="button" id="adCloseBtn" class="ad-close-btn">광고 닫기</button>
-            <div id="adCountdownText" class="ad-countdown">광고 닫기까지 15초</div>
+    <div id="replayModal" class="replay-modal" aria-hidden="true">
+        <div class="replay-modal-card">
+            <button type="button" id="replayCloseBtn" class="replay-close-btn">광고 닫기</button>
+            <div id="replayCountdownText" class="replay-countdown">광고 닫기까지 15초</div>
         </div>
     </div>
 
