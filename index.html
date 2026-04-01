@@ -131,14 +131,23 @@ button { -webkit-tap-highlight-color: transparent; }
     margin-bottom: 10px;
 }
 .q-number { font-size: 20px; font-weight: 700; color: #e94560; }
-.q-rate {
-    font-size: 12px;
+.q-category {
+    font-size: 14px;
     color: #a0a0b0;
     background: rgba(255,255,255,0.08);
     padding: 3px 10px;
     border-radius: 20px;
-    display: inline-block;
-    margin-left: 8px;
+    display: none;
+    margin-right: 6px;
+    vertical-align: baseline;
+    white-space: nowrap;
+}
+.q-category.show { display: inline-block; }
+.q-rate {
+    font-size: 12px;
+    color: #a0a0b0;
+    border-radius: 20px;
+    margin-left: 4px;
     vertical-align: baseline;
     white-space: nowrap;
 }
@@ -623,7 +632,7 @@ button { -webkit-tap-highlight-color: transparent; }
             <div class="quiz-header">
                 <span class="q-number" id="qNumber"></span>
             </div>
-            <div class="quiz-question"><span class="quiz-question-text" id="qText"></span><span class="q-rate" id="qRate"></span></div>
+            <div class="quiz-question"><span class="q-category" id="qCategory"></span><span class="quiz-question-text" id="qText"></span><span class="q-rate" id="qRate"></span></div>
             <div class="combo-pop" id="comboPop"></div>
             <div id="optionsContainer"></div>
             <div class="timer-section">
@@ -699,12 +708,19 @@ var INITIAL_TIME   = 60;   // 초기 시간(초)
 var CORRECT_BONUS  = 1;    // 정답 보너스(초)
 var WRONG_PENALTY  = 1;    // 오답 패널티(초)
 
+var CATEGORY_NAMES = {
+    totalgame: "종합 게임",
+    genshin: "원신",
+    bluearchive: "블루 아카이브"
+};
+
 /* ============================================================
  *  게임 상태
  * ============================================================ */
 var currentQuestions = [];
 var currentIndex    = 0;
 var questionNumber  = 0;
+var selectedCategory = "all";
 var correctCount    = 0;
 var totalAnswered   = 0;
 var totalScore      = 0;
@@ -1044,6 +1060,7 @@ function playComboImpact(streak) {
  *  DOM 참조
  * ============================================================ */
 var $qNumber         = document.getElementById("qNumber");
+var $qCategory       = document.getElementById("qCategory");
 var $qRate           = document.getElementById("qRate");
 var $qText           = document.getElementById("qText");
 var $optionsContainer = document.getElementById("optionsContainer");
@@ -1244,7 +1261,7 @@ function startGame() {
     stopFinalTheme(false);
     startBgm();
 
-    var selectedCategory = document.getElementById("categorySelect").value;
+    selectedCategory = document.getElementById("categorySelect").value;
     var sourceQuestions = selectedCategory === "all"
         ? QUESTIONS
         : QUESTIONS.filter(function (q) { return q.category === selectedCategory; });
@@ -1291,7 +1308,16 @@ function showQuestion() {
     var q = currentQuestions[currentIndex];
 
     $qNumber.textContent = "Q" + questionNumber;
-    $qRate.textContent   = "정답률: " + q.rate + "%";
+
+    // 전체 모드일 때 카테고리명 표시
+    if (selectedCategory === "all" && q.category && CATEGORY_NAMES[q.category]) {
+        $qCategory.textContent = CATEGORY_NAMES[q.category];
+        $qCategory.classList.add("show");
+    } else {
+        $qCategory.classList.remove("show");
+    }
+
+    $qRate.textContent   = "(정답률: " + q.rate + "%)";
     $qText.textContent   = q.text;
 
     $optionsContainer.innerHTML = "";
@@ -1727,7 +1753,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "e스포츠 역사상 가장 유명한 라이벌 매치인 '임진록'에서, 상대에게 3연속 벙커링을 시전한 전 프로게이머는?",
+        "text": "e스포츠 역사상 가장 유명한 라이벌 매치인 '임진록'에서, 상대에게 3연속 벙커링을 시전한 전 프로게이머는?", // LONG: 60chars
         "choices": ["홍진호", "임요환", "이윤열", "최연성"],
         "answer": 1,
         "category": "totalgame"
@@ -1745,13 +1771,13 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "'오버워치'에서 \"석양이 진다...\"라는 대사 하나로 모두를 숨게 만들었던 영웅의 현재 이름은? (2026년 기준)",
+        "text": "'오버워치'에서 \"석양이 진다...\"라는 대사 하나로 모두를 숨게 만들었던 영웅의 현재 이름은? (2026년 기준)", // LONG: 64chars
         "choices": ["맥크리", "캐서디", "애쉬", "솔저: 76"],
         "answer": 1,
         "category": "totalgame"
     },
     {
-        "text": "'리그 오브 레전드'에서 '페이커' 이상혁 선수가 2023년 롤드컵 우승 후 자신의 4번째 우승 스킨으로 선택한 챔피언은?",
+        "text": "'리그 오브 레전드'에서 '페이커' 이상혁 선수가 2023년 롤드컵 우승 후 자신의 4번째 우승 스킨으로 선택한 챔피언은?", // LONG: 68chars
         "choices": ["오리아나", "아리", "아지르", "르블랑"],
         "answer": 0,
         "category": "totalgame"
@@ -1769,7 +1795,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "'마인크래프트'에서 유저 몰래 등 뒤로 다가와 터지며, 열심히 지은 집과 멘탈을 동시에 날려버리는 몬스터는?",
+        "text": "'마인크래프트'에서 유저 몰래 등 뒤로 다가와 터지며, 열심히 지은 집과 멘탈을 동시에 날려버리는 몬스터는?", // LONG: 60chars
         "choices": ["좀비", "스켈레톤", "크리퍼", "엔더맨"],
         "answer": 2,
         "category": "totalgame"
@@ -1787,19 +1813,19 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "'GTA5'에서 요가를 하다가 화를 내고, 아들과 거리를 좁히지 못하는 등 다사다난한 중년의 위기를 겪는 주인공의 이름은?",
+        "text": "'GTA5'에서 요가를 하다가 화를 내고, 아들과 거리를 좁히지 못하는 등 다사다난한 중년의 위기를 겪는 주인공의 이름은?", // LONG: 68chars
         "choices": ["트레버", "프랭클린", "마이클", "라마"],
         "answer": 2,
         "category": "totalgame"
     },
     {
-        "text": "'엘든 링'에서 수많은 뉴비들을 입구컷 시키며 '트리가드'라는 이름으로 악명 높은 보스가 타고 있는 것은?",
+        "text": "'엘든 링'에서 수많은 뉴비들을 입구컷 시키며 '트리가드'라는 이름으로 악명 높은 보스가 타고 있는 것은?", // LONG: 59chars
         "choices": ["말", "드래곤", "거북이", "돼지"],
         "answer": 0,
         "category": "totalgame"
     },
     {
-        "text": "'갓 오브 워' 시리즈의 주인공 크레토스가 북유럽 신화로 넘어와서 아들 아트레우스를 부를 때 쓰는 가장 친근한 호칭은?",
+        "text": "'갓 오브 워' 시리즈의 주인공 크레토스가 북유럽 신화로 넘어와서 아들 아트레우스를 부를 때 쓰는 가장 친근한 호칭은?", // LONG: 66chars
         "choices": ["Son!", "Boy!", "Kid!", "Hey!"],
         "answer": 1,
         "category": "totalgame"
@@ -1823,13 +1849,13 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "'디아블로 3' 출시 초기, 수많은 게이머들을 로그인 창에서 밤새게 만들었던 서버 접속 대기열 에러 코드는?",
+        "text": "'디아블로 3' 출시 초기, 수많은 게이머들을 로그인 창에서 밤새게 만들었던 서버 접속 대기열 에러 코드는?", // LONG: 60chars
         "choices": ["에러 37", "에러 404", "에러 502", "에러 999"],
         "answer": 0,
         "category": "totalgame"
     },
     {
-        "text": "'던전앤파이터' 과거 유저들이 무기 강화를 하다 아이템이 깨졌을 때 가장 원망했던 악명 높은 강화 NPC의 이름은?",
+        "text": "'던전앤파이터' 과거 유저들이 무기 강화를 하다 아이템이 깨졌을 때 가장 원망했던 악명 높은 강화 NPC의 이름은?", // LONG: 64chars
         "choices": ["세리아", "키리", "단진", "칸나"],
         "answer": 1,
         "category": "totalgame"
@@ -1949,13 +1975,13 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "오버워치에서 '이것도 너프해 보시지!'라는 도발적인 대사와 함께 로봇을 자폭시켜버리는 한국 국적의 영웅은?",
+        "text": "오버워치에서 '이것도 너프해 보시지!'라는 도발적인 대사와 함께 로봇을 자폭시켜버리는 한국 국적의 영웅은?", // LONG: 59chars
         "choices": ["트레이서", "메이", "위도우메이커", "D.Va(디바)"],
         "answer": 3,
         "category": "totalgame"
     },
     {
-        "text": "마인크래프트를 처음 시작하면 기본적으로 적용되어 있는, 하늘색 셔츠를 입은 듬직한 기본 캐릭터의 이름은?",
+        "text": "마인크래프트를 처음 시작하면 기본적으로 적용되어 있는, 하늘색 셔츠를 입은 듬직한 기본 캐릭터의 이름은?", // LONG: 58chars
         "choices": ["알렉스", "스티브", "히로빈", "노치"],
         "answer": 1,
         "category": "totalgame"
@@ -1973,7 +1999,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "하프라이프 시리즈의 주인공 '고든 프리맨'을 상징하는 무기이자, 외계인과 상자를 모두 부술 수 있는 만능 도구는?",
+        "text": "하프라이프 시리즈의 주인공을 상징하는 무기이자, 외계인과 상자를 모두 부술 수 있는 만능 도구는?",
         "choices": ["전기톱", "빠루", "렌치", "프라이팬"],
         "answer": 1,
         "category": "totalgame"
@@ -1997,7 +2023,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "동물의 숲 시리즈에서 매주 토요일 밤마다 광장에 나타나 감미로운 기타 연주와 노래를 들려주는 뮤지션의 이름은?",
+        "text": "동물의 숲 시리즈에서 매주 토요일 밤마다 광장에 나타나 감미로운 기타 연주와 노래를 들려주는 뮤지션의 이름은?", // LONG: 61chars
         "choices": ["T.K.", "여울", "도루묵씨", "마스터"],
         "answer": 0,
         "category": "totalgame"
@@ -2045,13 +2071,13 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "스트리트 파이터 시리즈에서 류와 켄이 사용하는 기술로, '↓↘→ + P' 를 입력하면 나가는 유명한 기술의 이름은?",
+        "text": "스트리트 파이터 시리즈에서 류와 켄이 사용하는 기술로, '↓↘→ + P' 를 입력하면 나가는 유명한 기술의 이름은?", // LONG: 64chars
         "choices": ["파동권", "승룡권", "용권선풍각", "춘리킥"],
         "answer": 0,
         "category": "totalgame"
     },
     {
-        "text": "전 세계에서 가장 많이 팔린 퍼즐 게임 '테트리스'에서, 위에서 떨어지는 조각들을 지칭하는 공식 용어는?",
+        "text": "전 세계에서 가장 많이 팔린 퍼즐 게임 '테트리스'에서, 위에서 떨어지는 조각들을 지칭하는 공식 용어는?", // LONG: 58chars
         "choices": ["레고", "블록", "테트로미노", "폴리미노"],
         "answer": 2,
         "category": "totalgame"
@@ -2135,7 +2161,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "액션 게임 '갓 오브 워' 시리즈의 주인공 '크레토스'가 북유럽 신화 배경에서 주로 사용하는 도끼의 이름은?",
+        "text": "액션 게임 '갓 오브 워' 시리즈의 주인공 '크레토스'가 북유럽 신화 배경에서 주로 사용하는 도끼의 이름은?", // LONG: 60chars
         "choices": ["묠니르", "궁니르", "리바이어던 도끼", "혼돈의 도끼"],
         "answer": 2,
         "category": "totalgame"
@@ -2183,7 +2209,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "헌팅 액션 게임 '몬스터 헌터' 시리즈에서 헌터들의 사냥을 돕는, 두 발로 걷는 고양이 수인종의 이름은?",
+        "text": "헌팅 액션 게임 '몬스터 헌터' 시리즈에서 헌터들의 사냥을 돕는, 두 발로 걷는 고양이 수인종의 이름은?", // LONG: 58chars
         "choices": ["모그리", "아이루", "초코보", "팔루"],
         "answer": 1,
         "category": "totalgame"
@@ -2201,7 +2227,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "젤리빈 같은 캐릭터들이 각종 장애물을 넘으며 최후의 1인이 남을 때까지 경쟁하는 배틀로얄 게임의 이름은?",
+        "text": "젤리빈 같은 캐릭터들이 각종 장애물을 넘으며 최후의 1인이 남을 때까지 경쟁하는 배틀로얄 게임의 이름은?", // LONG: 58chars
         "choices": ["갱 비스트", "폴가이즈", "휴먼 폴 플랫", "파티 애니멀즈"],
         "answer": 1,
         "category": "totalgame"
@@ -2237,13 +2263,13 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "거스트의 '아틀리에' 시리즈에서 연금술사 주인공들이 재료를 모아 아이템을 조합할 때 반드시 사용하는 도구는?",
+        "text": "거스트의 '아틀리에' 시리즈에서 연금술사 주인공들이 재료를 모아 아이템을 조합할 때 반드시 사용하는 도구는?", // LONG: 60chars
         "choices": ["현자의 돌", "마법 지팡이", "가마솥", "연성진"],
         "answer": 2,
         "category": "totalgame"
     },
     {
-        "text": "닌텐도의 SRPG '파이어 엠블렘' 시리즈에서 전투 중 캐릭터가 사망하면 다시는 부활하지 않는 모드는?",
+        "text": "닌텐도의 SRPG '파이어 엠블렘' 시리즈에서 전투 중 캐릭터가 사망하면 다시는 부활하지 않는 모드는?", // LONG: 57chars
         "choices": ["하드코어 모드", "데스 모드", "클래식 모드", "루나틱 모드"],
         "answer": 2,
         "category": "totalgame"
@@ -2261,7 +2287,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "다양한 유명 로봇 애니메이션에 등장하는 로봇들로 턴제 전투를 벌이는 크로스오버 SRPG 시리즈의 이름은?",
+        "text": "다양한 유명 로봇 애니메이션에 등장하는 로봇들로 턴제 전투를 벌이는 크로스오버 SRPG 시리즈의 이름은?", // LONG: 58chars
         "choices": ["SD건담 지 제네레이션", "프론트 미션", "슈퍼로봇대전", "아머드 코어"],
         "answer": 2,
         "category": "totalgame"
@@ -2279,7 +2305,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "아틀러스의 RPG '페르소나 4'에서 주인공 일행이 살인 사건의 진상을 파헤치며 활동하는 시골 마을의 이름은?",
+        "text": "아틀러스의 RPG '페르소나 4'에서 주인공 일행이 살인 사건의 진상을 파헤치며 활동하는 시골 마을의 이름은?", // LONG: 61chars
         "choices": ["이나바", "츠카사", "야소가미", "스미레"],
         "answer": 0,
         "category": "totalgame"
@@ -2297,13 +2323,13 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "닌텐도의 RPG '제노블레이드 크로니클스' 1편에서 주인공 슈르크 일행이 살아가는 거대한 신의 유해 이름은?",
+        "text": "닌텐도의 RPG '제노블레이드 크로니클스' 1편에서 주인공 슈르크 일행이 살아가는 거대한 신의 유해 이름은?", // LONG: 60chars
         "choices": ["기신", "거신", "해신", "천신"],
         "answer": 1,
         "category": "totalgame"
     },
     {
-        "text": "닌텐도의 SRPG '파이어 엠블렘' 시리즈 전통의 무기 상성 시스템에서 '검'이 우위를 가지는 무기는?",
+        "text": "닌텐도의 SRPG '파이어 엠블렘' 시리즈 전통의 무기 상성 시스템에서 '검'이 우위를 가지는 무기는?", // LONG: 57chars
         "choices": ["창", "활", "마법", "도끼"],
         "answer": 3,
         "category": "totalgame"
@@ -2405,13 +2431,13 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "고전 아케이드 게임 '팩맨'에서 팩맨이 스테이지에 있는 쿠키를 다 먹지 못하게 방해하는 적들의 정체는?",
+        "text": "고전 아케이드 게임 '팩맨'에서 팩맨이 스테이지에 있는 쿠키를 다 먹지 못하게 방해하는 적들의 정체는?", // LONG: 57chars
         "choices": ["외계인", "유령", "거미", "로봇"],
         "answer": 1,
         "category": "totalgame"
     },
     {
-        "text": "'모탈 컴뱃' 시리즈의 상징으로, 상대방의 체력을 모두 소진시킨 후 잔혹하게 마무리하는 시스템의 이름은?",
+        "text": "'모탈 컴뱃' 시리즈의 상징으로, 상대방의 체력을 모두 소진시킨 후 잔혹하게 마무리하는 시스템의 이름은?", // LONG: 58chars
         "choices": ["브루탈리티(Brutality)", "페이탈리티(Fatality)", "하라키리(Hara-Kiri)", "애니멀리티(Animality)"],
         "answer": 1,
         "category": "totalgame"
@@ -2423,7 +2449,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "'엘더스크롤 5: 스카이림'에서 주인공이 사용하는 가장 대표적인 용언인 'FUS RO DAH'의 뜻은?",
+        "text": "'엘더스크롤 5: 스카이림'에서 주인공이 사용하는 가장 대표적인 용언인 'FUS RO DAH'의 뜻은?", // LONG: 57chars
         "choices": ["거침없는 힘", "화염 숨결", "선풍의 질주", "시간 둔화"],
         "answer": 0,
         "category": "totalgame"
@@ -2435,7 +2461,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "'둠' 시리즈에서 플레이어가 얻을 수 있는 가장 강력한 무기인 BFG9000의 'BFG'는 무엇의 약자인가?",
+        "text": "'둠' 시리즈에서 플레이어가 얻을 수 있는 가장 강력한 무기인 BFG9000의 'BFG'는 무엇의 약자인가?", // LONG: 60chars
         "choices": ["Big Fire Gun", "Big Fucking Gun", "Blast Force Gun", "Bio Force Gun"],
         "answer": 1,
         "category": "totalgame"
@@ -2495,7 +2521,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "전술 슈팅 '레인보우 식스 시즈'에서 DP-27 거치형 기관총을 주무기로 사용하여 유저들 사이에서 '군주님'이라 불리는 오퍼레이터는?",
+        "text": "전술 슈팅 '레인보우 식스 시즈'에서 DP-27 거치형 기관총을 주무기로 사용하여 유저들 사이에서 '군주님'이라 불리는 오퍼레이터는?", // LONG: 74chars
         "choices": ["캅칸", "퓨즈", "타찬카", "글라즈"],
         "answer": 2,
         "category": "totalgame"
@@ -2519,7 +2545,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "'우마무스메 프리티 더비'에 등장하는, 홋카이도에서 상경하여 후일 일본 총대장이라 불리는 우마무스메의 이름은?",
+        "text": "'우마무스메 프리티 더비'에 등장하는, 홋카이도에서 상경하여 후일 일본 총대장이라 불리는 우마무스메의 이름은?", // LONG: 61chars
         "choices": ["스페셜 위크", "사일런스 스즈카", "토카이 테이오", "골드 쉽"],
         "answer": 0,
         "category": "totalgame"
@@ -2716,7 +2742,7 @@ var QUESTIONS = [
         "answer": 2,
         "category": "genshin"
     },
-        {
+    {
         "text": "블루 아카이브의 무대가 되는 거대 학원도시의 이름은?",
         "choices": ["트리니티", "키보토스", "밀레니엄", "샬레"],
         "answer": 1,
@@ -2759,8 +2785,8 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "트리니티 종합학원의 '보충수업부' 부장을 맡고 있는 학생은?",
-        "choices": ["히후미", "아즈사", "코하루", "하나코"],
+        "text": "다음 중 공통점이 없는 학생은?",
+        "choices": ["치히로", "아야네", "린", "하나코"],
         "answer": 0,
         "category": "bluearchive"
     },
@@ -2796,7 +2822,7 @@ var QUESTIONS = [
     },
     {
         "text": "발키리 경찰학교 공안국의 국장을 맡고 있는 학생은?",
-        "choices": ["후부키", "칸나", "키리노", "네무구모"],
+        "choices": ["후부키", "칸나", "키리노", "코노카"],
         "answer": 1,
         "category": "bluearchive"
     },
@@ -2915,13 +2941,13 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "SRT 특수학원이 폐쇄된 직후, 오갈 데 없어진 RABBIT 소대가 텐트를 치고 노숙을 시작한 공원의 이름은?",
+        "text": "SRT 특수학원이 폐쇄된 직후, 오갈 데 없어진 RABBIT 소대가 텐트를 치고 노숙을 시작한 공원의 이름은?", // LONG: 61chars
         "choices": ["시라사기 공원", "쿠로사기 공원", "코우사기 공원", "아오사기 공원"],
         "answer": 2,
         "category": "bluearchive"
     },
     {
-        "text": "파반느 2장 스토리에서 학생회장 리오가 밀레니엄의 자본을 횡령해 폐허에 건설했던 '거울의 도시' 이름은?",
+        "text": "파반느 2장 스토리에서 학생회장 리오가 밀레니엄의 자본을 횡령해 폐허에 건설했던 '거울의 도시' 이름은?", // LONG: 58chars
         "choices": ["바벨", "우루크", "멤피스", "에리두"],
         "answer": 3,
         "category": "bluearchive"
@@ -2939,31 +2965,31 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "키보토스 최악의 범죄자들인 '칠수인' 중 한 명이자, 가장 먼저 정체가 공개된 코사카 와카모의 이명(별명)은?",
+        "text": "키보토스 최악의 범죄자들인 '칠수인' 중 한 명이자, 가장 먼저 정체가 공개된 코사카 와카모의 이명은?", // LONG: 57chars
         "choices": ["칠흑의 토끼", "나락의 고양이", "재액의 여우", "파멸의 늑대"],
         "answer": 2,
         "category": "bluearchive"
     },
     {
-        "text": "키보토스를 떠도는 시바견 마스터가 운영하며, 아비도스 대책위원회 학생들이 자주 가는 단골 라면 가게의 이름은?",
+        "text": "아비도스 대책위원회 학생들이 자주 가는 단골 라면 가게의 이름은?",
         "choices": ["시로쿠로 라멘", "아비도스 라멘", "멍멍 라멘", "시바세키 라멘"],
         "answer": 3,
         "category": "bluearchive"
     },
     {
-        "text": "산해경 고급수성학교 소속 학생이자 매화원의 교관으로, 어린아이들을 돌보는 역할을 맡고 있는 11세 학생은?",
+        "text": "산해경 고급수성학교 소속 학생이자 매화원의 교관으로, 어린아이들을 돌보는 역할을 맡고 있는 11세 학생은?", // LONG: 59chars
         "choices": ["루미", "미나", "코코나", "슌"],
         "answer": 2,
         "category": "bluearchive"
     },
     {
-        "text": "게헨나 학원에서 온천이 나올 만한 곳이면 어디든 건물을 폭파하고 파헤치는 '온천개발부'의 부장 이름은?",
+        "text": "게헨나 학원에서 온천이 나올 만한 곳이면 어디든 건물을 폭파하고 파헤치는 '온천개발부'의 부장 이름은?", // LONG: 57chars
         "choices": ["메구", "카스미", "이즈미", "치나츠"],
         "answer": 1,
         "category": "bluearchive"
     },
     {
-        "text": "메인 스토리 최종편에서, 선생님과 학생들이 '거짓된 생텀'으로 향하기 위해 탑승한 고대 우주 전함의 이름은?",
+        "text": "메인 스토리 최종편에서, 선생님과 학생들이 '거짓된 생텀'으로 향하기 위해 탑승한 고대 우주 전함의 이름은?", // LONG: 60chars
         "choices": ["키보토스의 방주", "아트라하시스의 방주", "데카그라마톤의 방주", "우트나피쉬팀의 배"],
         "answer": 3,
         "category": "bluearchive"
@@ -2981,7 +3007,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "아비도스 대책위원회가 은행을 털 때 결성한 '수영복 복면단'에서, 히후미에게 부여된 복면 번호와 가명은?",
+        "text": "아비도스 대책위원회가 은행을 털 때 결성한 '수영복 복면단'에서, 히후미에게 부여된 복면 번호와 가명은?", // LONG: 58chars
         "choices": ["1번 시로코", "5번 파우스트", "3번 호시노", "4번 헬멧"],
         "answer": 1,
         "category": "bluearchive"
@@ -2993,7 +3019,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "페로로, 스컬맨, 앵그리 아델 등이 속해 있는 블루 아카이브 세계관 내 최고 인기 캐릭터 브랜드의 이름은?",
+        "text": "페로로, 스컬맨, 앵그리 아델 등이 속해 있는 블루 아카이브 세계관 내 최고 인기 캐릭터 브랜드의 이름은?", // LONG: 59chars
         "choices": ["모모프렌즈", "페로로 앤 프렌즈", "키보토스 프렌즈", "샬레 프렌즈"],
         "answer": 0,
         "category": "bluearchive"
@@ -3005,7 +3031,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "백귀야행 연합학원의 축제 운영 위원회인 '마츠리운영관리부'의 부장이자 전통 찻집 백야당을 운영하는 학생은?",
+        "text": "백귀야행 연합학원의 '마츠리운영관리부'의 부장이자 전통 찻집 백야당을 운영하는 학생은?",
         "choices": ["우미카", "시즈코", "츠바키", "미모리"],
         "answer": 1,
         "category": "bluearchive"
@@ -3023,13 +3049,13 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "크로노스 스쿨 소속으로, 샬레와 키보토스 곳곳의 각종 특종 소식을 발 빠르게 전하는 간판 아나운서의 이름은?",
+        "text": "크로노스 스쿨 소속으로, 샬레와 키보토스 곳곳의 각종 소식을 발빠르게 전하는 간판 아나운서의 이름은?",
         "choices": ["마이", "모에", "시논", "아오이"],
         "answer": 2,
         "category": "bluearchive"
     },
     {
-        "text": "밀레니엄의 학생회 '세미나' 소속이었으나, 뛰어난 암호 해독 능력을 악용해 횡령 사건을 일으켜 징계를 받았던 학생은?",
+        "text": "뛰어난 암호 해독 능력을 악용해 횡령 사건을 일으켜 징계를 받았던 밀레니엄의 '세미나' 소속 학생은?",
         "choices": ["노아", "코유키", "유우카", "리오"],
         "answer": 1,
         "category": "bluearchive"
@@ -3047,13 +3073,13 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "게헨나 학원의 '급양부' 소속으로, 최악의 요리 실력을 가졌음에도 항상 해괴하고 위험한 요리를 만들어내는 학생은?",
+        "text": "게헨나 학원의 '급양부' 소속으로, 최악의 요리 실력을 가졌음에도 항상 해괴하고 위험한 요리를 만들어내는 학생은?", // LONG: 63chars
         "choices": ["주리", "준코", "후우카", "이즈미"],
         "answer": 0,
         "category": "bluearchive"
     },
     {
-        "text": "선생님이 일상적인 업무를 보거나 학생들을 초대하여 인연을 쌓는 공간으로, 샬레 건물 내에 위치한 시설은?",
+        "text": "선생님이 일상적인 업무를 보거나 학생들을 초대하여 인연을 쌓는 공간으로, 샬레 건물 내에 위치한 시설은?", // LONG: 58chars
         "choices": ["샬레 기숙사", "샬레 부속 카페", "샬레 부속 온천", "총학생회 회의실"],
         "answer": 1,
         "category": "bluearchive"
@@ -3071,19 +3097,19 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "학생들의 공격 타입 중 하나인 '진동' 공격이 약점을 찔러 200%의 피해를 입힐 수 있는 장갑 타입은?",
+        "text": "학생들의 공격 타입 중 하나인 '진동' 공격이 약점을 찔러 200%의 피해를 입힐 수 있는 장갑 타입은?", // LONG: 58chars
         "choices": ["경장갑", "중장갑", "특수장갑", "탄력장갑"],
         "answer": 3,
         "category": "bluearchive"
     },
     {
-        "text": "탱커 포지션 학생들의 생존력을 결정짓는 핵심 장비로, T4 이상 강화 시 방어력을 크게 올려주는 장비 슬롯은?",
+        "text": "탱커 포지션 학생들의 생존력을 결정짓는 핵심 장비로, T4 이상 강화 시 방어력을 크게 올려주는 장비 슬롯은?", // LONG: 61chars
         "choices": ["모자", "헤어핀", "시계", "가방"],
         "answer": 3,
         "category": "bluearchive"
     },
     {
-        "text": "총력전 보스 '예로니무스'에서, 아군 힐러가 초록색 등불의 체력을 가득 채웠을 때 보스에게 부여되는 디버프 효과는?",
+        "text": "총력전 보스 '예로니무스'에서, 아군 힐러가 초록색 등불의 체력을 가득 채웠을 때 보스에게 부여되는 디버프 효과는?", // LONG: 64chars
         "choices": ["공격력 감소", "방어력 감소", "치유력 감소", "회피율 감소"],
         "answer": 1,
         "category": "bluearchive"
@@ -3113,19 +3139,19 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "총력전 보스 '비나'를 상대할 때, 유저가 마키나 아카네 등을 편성하여 가장 먼저 파훼해야 하는 스탯은?",
+        "text": "총력전 보스 '비나'를 상대할 때, 유저가 마키나 아카네 등을 편성하여 가장 먼저 파훼해야 하는 스탯은?", // LONG: 58chars
         "choices": ["회피 수치", "체력 회복률", "방어력", "치명 저항력"],
         "answer": 2,
         "category": "bluearchive"
     },
     {
-        "text": "종합전술시험에서 한 번의 티켓을 소모하여 총 3번의 전투를 치를 때, 가장 크게 적용되는 부대 편성 규칙은?",
+        "text": "종합전술시험에서 한 번의 티켓을 소모하여 총 3번의 전투를 치를 때, 가장 크게 적용되는 부대 편성 규칙은?", // LONG: 60chars
         "choices": ["매 층마다 코스트 회복 속도 감소", "이전 전투에서 사용한 학생 재사용 불가", "스페셜(Special) 학생 편성 불가", "서포터 포지션 학생의 스킬 봉인"],
         "answer": 1,
         "category": "bluearchive"
     },
     {
-        "text": "전술대회(PvP)에서 제한 시간 3분이 모두 경과하여 타임오버가 발생했을 때, 승패를 결정짓는 기준은?",
+        "text": "전술대회(PvP)에서 제한 시간 3분이 모두 경과하여 타임오버가 발생했을 때, 승패를 결정짓는 기준은?", // LONG: 57chars
         "choices": ["생존한 학생의 수가 더 많은 쪽", "적에게 입힌 총 데미지가 더 높은 쪽", "전체 체력 대비 남은 체력 비율이 높은 쪽", "타임오버 시 무조건 방어측의 승리"],
         "answer": 2,
         "category": "bluearchive"
@@ -3137,25 +3163,25 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "총력전 난이도 중, '익스트림(Extreme)'과 '토먼트(Torment)' 사이에 위치한 난이도의 이름은?",
+        "text": "총력전 난이도 중, '익스트림(Extreme)'과 '토먼트(Torment)' 사이에 위치한 난이도의 이름은?", // LONG: 60chars
         "choices": ["하드코어 (Hardcore)", "인세인 (Insane)", "루나틱 (Lunatic)", "얼티밋 (Ultimate)"],
         "answer": 1,
         "category": "bluearchive"
     },
     {
-        "text": "총력전 보스 '페로로지라' 전투 중, 보스가 소환하는 미니 페로로들에게 광역 피해를 입히면 발생하는 핵심 기믹은?",
+        "text": "총력전 보스 '페로로지라' 전투 중, 보스가 소환하는 미니 페로로들에게 광역 피해를 입히면 발생하는 핵심 기믹은?", // LONG: 63chars
         "choices": ["미니 페로로가 즉사기를 시전한다", "아군의 코스트 회복이 정지된다", "미니 페로로가 받은 데미지가 본체에도 전이된다", "보스의 방어력이 일시적으로 크게 상승한다"],
         "answer": 2,
         "category": "bluearchive"
     },
     {
-        "text": "총력전 보스 '고즈' 2페이즈에서 3명의 고즈가 등장할 때, 진짜 본체를 구별할 수 있는 판별법이 아닌 것은?",
+        "text": "총력전 보스 '고즈' 2페이즈에서 3명의 고즈가 등장할 때, 진짜 본체를 구별할 수 있는 판별법이 아닌 것은?", // LONG: 61chars
         "choices": ["카드를 섞을 때 붉은 빛이 도는 폭탄을 들고 있는 쪽", "등장 시 이펙트 소리가 다른 쪽", "노아나 수영복 이즈나의 집중포화 마크가 유지되는 쪽", "가짜와 진짜의 체력바 색상이 다른 쪽"],
         "answer": 3,
         "category": "bluearchive"
     },
     {
-        "text": "학생의 장비 슬롯 중 '시계'를 높은 티어로 강화할 때, 가장 크게 상승하는 핵심 전투 스탯 두 가지는?",
+        "text": "학생의 장비 슬롯 중 '시계'를 높은 티어로 강화할 때, 가장 크게 상승하는 핵심 전투 스탯 두 가지는?", // LONG: 58chars
         "choices": ["체력과 방어력", "공격력과 명중 수치", "치명 수치와 치명 데미지", "회피 수치와 치유력"],
         "answer": 2,
         "category": "bluearchive"
@@ -3173,13 +3199,13 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "전투 중 체력이 0이 된 학생이 헬기를 타고 퇴각(사망)했을 때, 시스템적으로 부대에 즉시 발생하는 페널티는?",
+        "text": "전투 중 체력이 0이 된 학생이 헬기를 타고 퇴각(사망)했을 때, 시스템적으로 부대에 즉시 발생하는 페널티는?", // LONG: 61chars
         "choices": ["즉시 게임 오버 처리", "남은 아군의 공격력 영구 감소", "부대 전체의 코스트(Cost) 회복 속도 감소", "보스의 광폭화 패턴 발동"],
         "answer": 2,
         "category": "bluearchive"
     },
     {
-        "text": "전투 화면 우측 하단에 표시되는 스킬 패드(손패)에, 플레이어가 동시에 들고 있을 수 있는 최대 스킬 카드의 개수는?",
+        "text": "전투 화면 우측 하단에 표시되는 스킬 패드(손패)에, 플레이어가 동시에 들고 있을 수 있는 최대 스킬 카드의 개수는?", // LONG: 65chars
         "choices": ["3개", "4개", "5개", "6개"],
         "answer": 0,
         "category": "bluearchive"
@@ -3191,7 +3217,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "한 부대를 편성할 때, 직접 전투에 나서는 '스트라이커'와 후방 지원을 담당하는 '스페셜'의 최대 편성 인원은?",
+        "text": "한 부대를 편성할 때, 직접 전투에 나서는 '스트라이커'와 후방 지원을 담당하는 '스페셜'의 최대 편성 인원은?", // LONG: 62chars
         "choices": ["스트라이커 3명 / 스페셜 3명", "스트라이커 4명 / 스페셜 2명", "스트라이커 5명 / 스페셜 1명", "스트라이커 2명 / 스페셜 4명"],
         "answer": 1,
         "category": "bluearchive"
@@ -3209,31 +3235,31 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "학생들이 사용하는 무기군 특성상, 맵에 배치된 구조물 뒤로 숨는 '엄폐' 행동을 기본적으로 할 수 없는 무기군은?",
+        "text": "학생들이 사용하는 무기군 특성상, 맵에 배치된 구조물 뒤로 숨는 '엄폐' 행동을 기본적으로 할 수 없는 무기군은?", // LONG: 63chars
         "choices": ["SR (저격소총)", "MG (기관총)", "AR (돌격소총)", "HG (권총)"],
         "answer": 1,
         "category": "bluearchive"
     },
     {
-        "text": "우이나 새해 후우카 등이 아군의 EX 스킬 코스트를 절반으로 감소시켜 줄 때, 원래 5코스트인 스킬에 적용하면 몇 코스트가 되는가?",
+        "text": "우이나 새해 후우카 등이 아군의 EX 스킬 코스트를 절반으로 감소시킬 때, 원래 5코스트인 스킬은 몇 코스트가 되는가?", // LONG: 66chars
         "choices": ["1 코스트", "2 코스트", "3 코스트", "4 코스트"],
-        "answer": 1,
+        "answer": 2,
         "category": "bluearchive"
     },
     {
-        "text": "전술대회(PvP) 시즌이 바뀔 때마다 맵 환경이 변경되어 1티어 학생 풀이 크게 바뀌는 가장 주된 원인은?",
+        "text": "전술대회(PvP) 시즌이 바뀔 때마다 맵 환경이 변경되어 1티어 학생 풀이 크게 바뀌는 가장 주된 원인은?", // LONG: 59chars
         "choices": ["적용되는 날씨 효과의 변경", "시가지, 야전, 실내 등 전장 지형의 변경", "주간과 야간 시간대의 변경", "시스템상 강제되는 밴픽(Ban-pick) 룰의 추가"],
         "answer": 1,
         "category": "bluearchive"
     },
     {
-        "text": "보스 '쿠로카게' 전투 등에서 등장하며, 게이지가 가득 찰 경우 아군끼리 서로를 공격하게 만드는 치명적인 상태이상의 이름은?",
+        "text": "보스 '쿠로카게' 전투 등에서 등장하며, 게이지가 가득 찰 경우 아군끼리 서로를 공격하게 만드는 치명적인 상태이상의 이름은?", // LONG: 69chars
         "choices": ["오한", "침묵", "위압(혼란)", "기절"],
         "answer": 2,
         "category": "bluearchive"
     },
     {
-        "text": "부대에 편성된 스페셜(Special) 학생의 스탯 중 10~20%가량이 전방의 스트라이커(Striker) 학생들의 능력치에 직접적으로 더해지는 시스템을 무엇이라 부르는가?",
+        "text": "부대에 편성된 스페셜(Special) 학생의 스탯 중 10~20%가량이 전방의 스트라이커(Striker) 학생들의 능력치에 직접적으로 더해지는 시스템을 무엇이라 부르는가?", // LONG: 95chars
         "choices": ["인연 보너스", "스탯 지원 (지원 스탯)", "전술 버프", "지형 보너스"],
         "answer": 1,
         "category": "bluearchive"
