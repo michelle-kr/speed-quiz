@@ -28,6 +28,96 @@ button { -webkit-tap-highlight-color: transparent; }
     color: #fff;
 }
 
+/* 고득점 피버 모드 연출 */
+.fever-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 6;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    border-radius: 0;
+}
+.quiz-area.fever-mode .fever-overlay {
+    opacity: 1;
+}
+.fever-overlay::before,
+.fever-overlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 0;
+}
+.fever-overlay::before {
+    box-shadow:
+        inset 18px 0 18px -10px rgba(255, 60, 60, 0.18),
+        inset -18px 0 18px -10px rgba(80, 220, 255, 0.16),
+        inset 0 18px 18px -10px rgba(255, 210, 50, 0.16),
+        inset 0 -18px 18px -10px rgba(160, 80, 255, 0.15);
+    animation: feverGlowA 3.2s linear infinite;
+}
+.fever-overlay::after {
+    box-shadow:
+        inset 14px 14px 20px -10px rgba(80, 255, 140, 0.15),
+        inset -14px -14px 20px -10px rgba(255, 120, 200, 0.15),
+        inset -14px 14px 20px -10px rgba(255, 160, 50, 0.14),
+        inset 14px -14px 20px -10px rgba(100, 140, 255, 0.14);
+    animation: feverGlowB 4.5s linear infinite reverse;
+}
+.fever-badge {
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    color: #fff7d4;
+    text-shadow: 0 0 10px rgba(255, 220, 128, 0.65);
+    background: linear-gradient(135deg, rgba(255, 166, 78, 0.28), rgba(108, 193, 255, 0.28));
+    border: 1px solid rgba(255, 242, 181, 0.36);
+    border-radius: 999px;
+    padding: 4px 10px;
+    white-space: nowrap;
+    animation: feverBadgePulse 1.35s ease-in-out infinite;
+}
+.fever-spark {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: var(--clr, #fff6cb);
+    box-shadow: 0 0 5px var(--clr, rgba(255, 238, 166, 0.95));
+    top: var(--y, 20%);
+    left: var(--x, 10%);
+    opacity: 0;
+    animation: feverTwinkle var(--speed, 1.4s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+}
+.fever-spark::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 72%);
+}
+@keyframes feverGlowA {
+    0%   { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+@keyframes feverGlowB {
+    0%   { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+@keyframes feverBadgePulse {
+    0%, 100% { opacity: 0.82; transform: translateX(-50%) scale(0.98); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.03); }
+}
+@keyframes feverTwinkle {
+    0%, 100% { opacity: 0; transform: scale(0.6); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
 /* ── Screen Toggle ── */
 .screen { display: none; }
 .screen.active { display: flex; flex-direction: column; }
@@ -275,8 +365,8 @@ button { -webkit-tap-highlight-color: transparent; }
     font-size: 16px;
     font-weight: 600;
     line-height: 1.5;
-    margin-bottom: 14px;
-    height: 72px;
+    margin-bottom: 10px;
+    height: 80px;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -629,6 +719,21 @@ button { -webkit-tap-highlight-color: transparent; }
     <div id="quizScreen" class="screen">
         <button class="btn-bgm screen-bgm js-bgm-toggle" type="button" aria-label="배경음 끄기">🔊</button>
         <div class="quiz-area">
+            <div class="fever-overlay" aria-hidden="true">
+                <div class="fever-badge">🔥 고득점 모드!</div>
+                <span class="fever-spark" style="--x:6%; --y:10%; --speed:1.3s; --delay:0s; --clr:#ff9a9a;"></span>
+                <span class="fever-spark" style="--x:90%; --y:6%; --speed:1.7s; --delay:-0.3s; --clr:#ffd56b;"></span>
+                <span class="fever-spark" style="--x:50%; --y:3%; --speed:1.5s; --delay:-0.7s; --clr:#7eff9e;"></span>
+                <span class="fever-spark" style="--x:94%; --y:35%; --speed:1.4s; --delay:-1.0s; --clr:#7ec8ff;"></span>
+                <span class="fever-spark" style="--x:8%; --y:48%; --speed:1.8s; --delay:-0.5s; --clr:#d4a0ff;"></span>
+                <span class="fever-spark" style="--x:92%; --y:68%; --speed:1.6s; --delay:-1.3s; --clr:#ff8ecf;"></span>
+                <span class="fever-spark" style="--x:20%; --y:88%; --speed:1.9s; --delay:-0.2s; --clr:#ffb07a;"></span>
+                <span class="fever-spark" style="--x:75%; --y:92%; --speed:1.2s; --delay:-0.8s; --clr:#7affdb;"></span>
+                <span class="fever-spark" style="--x:42%; --y:95%; --speed:1.5s; --delay:-1.5s; --clr:#a0b4ff;"></span>
+                <span class="fever-spark" style="--x:14%; --y:28%; --speed:1.6s; --delay:-0.6s; --clr:#ffe47a;"></span>
+                <span class="fever-spark" style="--x:68%; --y:15%; --speed:1.3s; --delay:-1.1s; --clr:#ff7a7a;"></span>
+                <span class="fever-spark" style="--x:82%; --y:82%; --speed:1.7s; --delay:-0.9s; --clr:#80f0ff;"></span>
+            </div>
             <div class="quiz-header">
                 <span class="q-number" id="qNumber"></span>
             </div>
@@ -1000,6 +1105,7 @@ function showCombo(streak) {
     if (!$comboPop) return;
 
     if (streak < 5) {
+        setFeverMode(false);
         $comboPop.className = "combo-pop";
         $comboPop.textContent = "";
         return;
@@ -1013,9 +1119,16 @@ function showCombo(streak) {
     $comboPop.className = "combo-pop " + levelClass;
     void $comboPop.offsetWidth;
     $comboPop.className = "combo-pop " + levelClass + " show";
+    setFeverMode(isGold);
 
     playComboImpact(streak);
     emitComboSparkles(isGold);
+}
+
+function setFeverMode(enabled) {
+    var isOn = !!enabled && $quizScreen.classList.contains("active") && !gameOver;
+    var quizArea = $quizScreen.querySelector(".quiz-area");
+    if (quizArea) quizArea.classList.toggle("fever-mode", isOn);
 }
 
 function emitComboSparkles(isGold) {
@@ -1245,6 +1358,7 @@ function runCelebrationEffect() {
 function showScreen(id) {
     for (var i = 0; i < $screens.length; i++) $screens[i].classList.remove("active");
     document.getElementById(id).classList.add("active");
+    if (id !== "quizScreen") setFeverMode(false);
     if (id !== "resultScreen") {
         stopCelebrationEffect();
         stopFinalTheme(false);
@@ -1473,6 +1587,7 @@ function endGame() {
 
     // 붉은 깜빡임 효과 제거
     $container.classList.remove("urgent-flash");
+    setFeverMode(false);
     $timerText.classList.remove("urgent");
     $timerBar.parentElement.classList.remove("shake");
 
@@ -2977,7 +3092,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "밀레니엄 엔지니어부의 우타하가 애정을 담아 개발한, 강아지 모양의 다목적 총기 발사 로봇의 이름은?",
+        "text": "밀레니엄 엔지니어부의 우타하가 개발한, 강아지 모양의 다목적 총기 발사 로봇의 이름은?",
         "choices": ["천둥이", "벼락이", "구름이", "번개"],
         "answer": 0,
         "category": "bluearchive"
@@ -3170,7 +3285,7 @@ var QUESTIONS = [
     },
     {
         "text": "노아나 수영복 이즈나 등이 '집중포화' 상태이상을 부여했을 때 발생하는 효과는?",
-        "choices": ["해당 적의 방어력 0", "아군 전원이 사거리 내에서 해당 적을 최우선으로 일점사", "아군의 다음 공격이 무조건 치명타로 적중", "아군 전원의 공격 속도가 일시적으로 2배"],
+        "choices": ["해당 적의 방어력 0", "해당 적을 최우선으로 일점사", "아군의 다음 공격이 무조건 치명타로 적중", "아군 전원의 공격 속도가 일시적으로 2배"],
         "answer": 1,
         "category": "bluearchive"
     },
