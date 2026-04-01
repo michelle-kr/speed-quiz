@@ -1701,6 +1701,21 @@ window.addEventListener("beforeunload", function (event) {
     return "";
 });
 
+// 모바일: 탭 전환·브라우저 닫기 시 오디오 정지 / 복귀 시 재개
+document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+        bgmAudio.pause();
+        finalAudio.pause();
+    } else {
+        if (!isBgmEnabled) return;
+        if ($resultScreenEl.classList.contains("active")) {
+            finalAudio.play();
+        } else if ($quizScreen.classList.contains("active") && !gameOver) {
+            bgmAudio.play();
+        }
+    }
+});
+
 /* ============================================================
  *  문제 데이터 (데모 단일 파일 버전)
  * ============================================================ */
@@ -3044,7 +3059,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "스토리 상 플레이어가 거대한 기적을 일으킬 때 사용하는 '어른의 카드'는 무엇을 대가로 소모하는가?",
+        "text": "스토리 상 플레이어가 거대한 기적을 일으킬 때 사용하는 '어른의 카드'는 무엇이 대가인가?",
         "choices": ["청휘석", "현금", "싯딤의 상자 에너지", "선생님의 시간과 생명"],
         "answer": 3,
         "category": "bluearchive"
@@ -3062,13 +3077,13 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "탱커 포지션 학생들의 생존력을 결정짓는 핵심 장비로, T4 이상 강화 시 방어력을 고정 수치로 크게 올려주는 장비 슬롯은?",
+        "text": "탱커 포지션 학생들의 생존력을 결정짓는 핵심 장비로, T4 이상 강화 시 방어력을 크게 올려주는 장비 슬롯은?",
         "choices": ["모자", "헤어핀", "시계", "가방"],
         "answer": 3,
         "category": "bluearchive"
     },
     {
-        "text": "총력전 보스 '예로니무스' 전투에서, 아군 힐러가 초록색 등불의 체력을 가득 채웠을 때 보스에게 부여되는 디버프 효과는?",
+        "text": "총력전 보스 '예로니무스'에서, 아군 힐러가 초록색 등불의 체력을 가득 채웠을 때 보스에게 부여되는 디버프 효과는?",
         "choices": ["공격력 감소", "방어력 감소", "치유력 감소", "회피율 감소"],
         "answer": 1,
         "category": "bluearchive"
@@ -3080,7 +3095,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "총력전 보스 '시로 & 쿠로' 전투 중, 시로가 굴리는 거대한 폭탄의 궤도를 가로막아 튕겨내거나 일찍 터뜨릴 수 있는 유효한 전술은?",
+        "text": "총력전 보스 '시로&쿠로' 전투 중, 시로가 굴리는 폭탄에 대해 유효한 전술은?",
         "choices": ["아군 소환물 및 엄폐물 배치", "폭탄에 힐 스킬 사용", "아군 전체에게 보호막 부여", "보스에게 도발 스킬 사용"],
         "answer": 0,
         "category": "bluearchive"
@@ -3098,19 +3113,13 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "같은 부대원에게 동일한 아이콘을 가진 동종의 버프(예: EX 스킬에 의한 공격력 증가 2개)를 중복으로 부여했을 때, 시스템상 어떻게 적용되는가?",
-        "choices": ["수치가 더 높은 버프 하나만 적용된다", "두 버프의 수치가 합산되어 적용된다", "두 버프의 수치가 곱연산으로 폭증한다", "나중에 사용한 버프만 덮어씌워진다"],
-        "answer": 0,
-        "category": "bluearchive"
-    },
-    {
-        "text": "총력전 보스 '비나(Binah)'를 상대할 때, 유저가 마키나 아카네 등을 편성하여 가장 먼저 파훼해야 하는 비나의 막강한 스탯은?",
+        "text": "총력전 보스 '비나'를 상대할 때, 유저가 마키나 아카네 등을 편성하여 가장 먼저 파훼해야 하는 스탯은?",
         "choices": ["회피 수치", "체력 회복률", "방어력", "치명 저항력"],
         "answer": 2,
         "category": "bluearchive"
     },
     {
-        "text": "종합전술시험에서 한 번의 티켓을 소모하여 총 3번의 전투를 치러야 할 때, 가장 크게 적용되는 부대 편성 규칙은?",
+        "text": "종합전술시험에서 한 번의 티켓을 소모하여 총 3번의 전투를 치를 때, 가장 크게 적용되는 부대 편성 규칙은?",
         "choices": ["매 층마다 코스트 회복 속도 감소", "이전 전투에서 사용한 학생 재사용 불가", "스페셜(Special) 학생 편성 불가", "서포터 포지션 학생의 스킬 봉인"],
         "answer": 1,
         "category": "bluearchive"
@@ -3128,7 +3137,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "총력전 난이도 중, '익스트림(Extreme)'과 '토먼트(Torment)' 사이에 위치하며 보스들의 공격 속성이 본격적으로 추가되는 난이도의 이름은?",
+        "text": "총력전 난이도 중, '익스트림(Extreme)'과 '토먼트(Torment)' 사이에 위치한 난이도의 이름은?",
         "choices": ["하드코어 (Hardcore)", "인세인 (Insane)", "루나틱 (Lunatic)", "얼티밋 (Ultimate)"],
         "answer": 1,
         "category": "bluearchive"
