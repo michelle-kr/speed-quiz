@@ -386,7 +386,7 @@ button { -webkit-tap-highlight-color: transparent; }
 }
 
 /* 광고 영역 */
-.placeholder {
+.movie-placeholder {
     width: 360px;
     height: 202px;
     background: rgba(255,255,255,0.02);
@@ -557,7 +557,7 @@ button { -webkit-tap-highlight-color: transparent; }
 }
 
 /* 광고 시청 모달 */
-.replay-modal {
+.movie-modal {
     position: absolute;
     inset: 0;
     display: none;
@@ -566,8 +566,8 @@ button { -webkit-tap-highlight-color: transparent; }
     background: rgba(0,0,0,0.3);
     z-index: 29;
 }
-.replay-modal.show { display: flex; }
-.replay-modal-card {
+.movie-modal.show { display: flex; }
+.movie-modal-card {
     position: relative;
     width: 360px;
     height: 202px;
@@ -579,13 +579,13 @@ button { -webkit-tap-highlight-color: transparent; }
     align-items: center;
     justify-content: center;
 }
-.replay-countdown {
+.movie-countdown {
     font-size: 22px;
     font-weight: 800;
     color: #f4f6fa;
     text-align: center;
 }
-.replay-close-btn {
+.movie-close-btn {
     position: absolute;
     top: 8px;
     right: 8px;
@@ -599,7 +599,7 @@ button { -webkit-tap-highlight-color: transparent; }
     cursor: pointer;
     display: none;
 }
-.replay-close-btn.show { display: inline-block; }
+.movie-close-btn.show { display: inline-block; }
 </style>
 </head>
 <body>
@@ -645,7 +645,7 @@ button { -webkit-tap-highlight-color: transparent; }
                 </div>
             </div>
         </div>
-        <div class="placeholder">광고 영역 (360×202)</div>
+        <div class="movie-placeholder">광고 영역 (360×202)</div>
     </div>
 
     <!-- ── 결과 화면 ── -->
@@ -685,10 +685,10 @@ button { -webkit-tap-highlight-color: transparent; }
         </div>
     </div>
 
-    <div id="replayModal" class="replay-modal" aria-hidden="true">
-        <div class="replay-modal-card">
-            <button type="button" id="replayCloseBtn" class="replay-close-btn">광고 닫기</button>
-            <div id="replayCountdownText" class="replay-countdown">광고 닫기까지 15초</div>
+    <div id="movieModal" class="movie-modal" aria-hidden="true">
+        <div class="movie-modal-card">
+            <button type="button" id="movieCloseBtn" class="movie-close-btn">광고 닫기</button>
+            <div id="movieCountdownText" class="movie-countdown">광고 닫기까지 15초</div>
         </div>
     </div>
 
@@ -1079,9 +1079,9 @@ var $celebrationCanvas = document.getElementById("celebrationCanvas");
 var $leaveModal      = document.getElementById("leaveModal");
 var $leaveCancel     = document.getElementById("leaveCancel");
 var $leaveConfirm    = document.getElementById("leaveConfirm");
-var $adModal         = document.getElementById("adModal");
-var $adCountdownText = document.getElementById("adCountdownText");
-var $adCloseBtn      = document.getElementById("adCloseBtn");
+var $movieModal         = document.getElementById("movieModal");
+var $movieCountdownText = document.getElementById("movieCountdownText");
+var $movieCloseBtn      = document.getElementById("movieCloseBtn");
 var $container       = document.querySelector(".game-container");
 var $quizScreen      = document.getElementById("quizScreen");
 var $resultScreenEl  = document.getElementById("resultScreen");
@@ -1115,8 +1115,8 @@ function closeAdModal() {
         clearInterval(adCountdownTimer);
         adCountdownTimer = null;
     }
-    $adModal.classList.remove("show");
-    $adModal.setAttribute("aria-hidden", "true");
+    $movieModal.classList.remove("show");
+    $movieModal.setAttribute("aria-hidden", "true");
 }
 
 function openAdModal() {
@@ -1131,16 +1131,16 @@ function openAdModal() {
 
     closeAdModal();
     adRemainSeconds = 2;
-    $adCloseBtn.classList.remove("show");
-    $adCountdownText.textContent = "광고 시청중...";
-    $adModal.classList.add("show");
-    $adModal.setAttribute("aria-hidden", "false");
+    $movieCloseBtn.classList.remove("show");
+    $movieCountdownText.textContent = "광고 시청중...";
+    $movieModal.classList.add("show");
+    $movieModal.setAttribute("aria-hidden", "false");
 
     adCountdownTimer = setInterval(function () {
         adRemainSeconds--;
         if (adRemainSeconds <= 0) {
-            $adCountdownText.textContent = "광고 시청 완료";
-            $adCloseBtn.classList.add("show");
+            $movieCountdownText.textContent = "광고 시청 완료";
+            $movieCloseBtn.classList.add("show");
             clearInterval(adCountdownTimer);
             adCountdownTimer = null;
         }
@@ -1680,7 +1680,7 @@ $btnRestart.addEventListener("click", function () {
     openAdModal();
 });
 
-$adCloseBtn.addEventListener("click", function () {
+$movieCloseBtn.addEventListener("click", function () {
     closeAdModal();
     showScreen("startScreen");
 });
