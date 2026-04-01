@@ -1,0 +1,2360 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=360, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>스피드 퀴즈</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: #0f0f23;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    font-family: 'Malgun Gothic', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-user-select: none;
+    user-select: none;
+}
+button { -webkit-tap-highlight-color: transparent; }
+
+/* ── Container ── */
+.game-container {
+    width: 360px;
+    min-height: 480px;
+    background: #1a1a2e;
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+}
+
+/* ── Screen Toggle ── */
+.screen { display: none; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ============================================================
+ *  시작 화면
+ * ============================================================ */
+#startScreen {
+    position: relative;
+    padding: 40px 24px;
+    align-items: center;
+    justify-content: center;
+    min-height: 480px;
+}
+.screen-bgm {
+    position: absolute !important;
+    top: 15px;
+    right: 15px;
+    z-index: 5;
+}
+.game-logo { font-size: 48px; margin-bottom: 8px; }
+.game-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #e94560, #f39c12);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.rules {
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 32px;
+    font-size: 13px;
+    line-height: 1.9;
+    color: #c0c0d0;
+    width: 100%;
+    list-style: none;
+}
+.rules li::before { content: '• '; color: #e94560; }
+.btn-start {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #e94560, #c0392b);
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.btn-start:active { transform: scale(0.97); }
+
+/* ============================================================
+ *  퀴즈 화면
+ * ============================================================ */
+#quizScreen {
+    position: relative;
+    min-height: 480px;
+}
+
+.quiz-area {
+    height: 400px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.q-number { font-size: 20px; font-weight: 700; color: #e94560; }
+.q-rate {
+    font-size: 12px;
+    color: #a0a0b0;
+    background: rgba(255,255,255,0.08);
+    padding: 3px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-left: 8px;
+    vertical-align: baseline;
+    white-space: nowrap;
+}
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.btn-bgm {
+    width: 26px;
+    height: 26px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-bgm:active { transform: scale(0.95); }
+.combo-pop {
+    position: absolute;
+    left: 50%;
+    top: 132px;
+    transform: translateX(-50%) scale(0.7);
+    font-size: 30px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    color: #c0c8d2;
+    text-shadow: 0 2px 0 rgba(0,0,0,0.4), 0 0 14px rgba(192,200,210,0.35);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 4;
+    white-space: nowrap;
+    overflow: visible;
+}
+.combo-pop .combo-num {
+    color: #d5dbe3;
+}
+.combo-pop .combo-text {
+    color: #dce3ed;
+}
+.combo-pop.silver .combo-num {
+    color: #dce3ed;
+    text-shadow: 0 0 14px rgba(200,215,235,0.55);
+}
+.combo-pop.silver .combo-text {
+    color: #dce3ed;
+    text-shadow: 0 0 10px rgba(200,215,235,0.4);
+}
+.combo-pop.gold {
+    font-size: 36px;
+}
+.combo-pop .combo-num.gold {
+    color: #ffd34d;
+    text-shadow: 0 0 18px rgba(255,211,77,0.85);
+}
+.combo-pop .combo-text.gold {
+    color: #ffd34d;
+    text-shadow: 0 0 16px rgba(255,211,77,0.8);
+}
+.combo-pop.show {
+    animation: comboBurst 1.15s cubic-bezier(.2,.9,.2,1);
+}
+.combo-spark {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--size, 6px);
+    height: var(--size, 6px);
+    margin-left: calc(var(--size, 6px) * -0.5);
+    margin-top: calc(var(--size, 6px) * -0.5);
+    border-radius: 50%;
+    background: #dce3ed;
+    box-shadow: 0 0 10px rgba(220,227,237,0.85);
+    transform: translate(0, 0) scale(0.6);
+    opacity: 0;
+    animation: comboSpark 620ms ease-out forwards;
+    animation-delay: var(--delay, 0ms);
+}
+.combo-spark.gold {
+    background: #ffd34d;
+    box-shadow: 0 0 12px rgba(255,211,77,0.95);
+}
+@keyframes comboSpark {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.55);
+    }
+    18% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1.05);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--dx, 0px), var(--dy, -30px)) scale(0.3);
+    }
+}
+@keyframes comboBurst {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.62) rotate(-5deg);
+    }
+    24% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1.28) rotate(2deg);
+    }
+    42% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1.02) rotate(-1deg);
+    }
+    78% {
+        opacity: 0.92;
+        transform: translateX(-50%) scale(1.03);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) scale(1.16);
+    }
+}
+.quiz-question {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 14px;
+    height: 72px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    word-break: keep-all;
+}
+.quiz-question-text { display: inline; }
+
+/* 4지선다 */
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 10px;
+}
+.opt-btn {
+    padding: 11px 14px;
+    border: 2px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+}
+.opt-btn:active { transform: scale(0.98); }
+.opt-btn.correct { border-color: #00b894; background: rgba(0,184,148,0.2); }
+.opt-btn.wrong   { border-color: #d63031; background: rgba(214,48,49,0.2); }
+
+/* 점수 플로팅 */
+.score-float {
+    position: absolute;
+    right: 8px;
+    pointer-events: none;
+    font-weight: 900;
+    color: #00b894;
+    text-shadow: 0 1px 4px rgba(0,184,148,0.4);
+    opacity: 0;
+    animation: scoreFloat 0.8s ease-out forwards;
+    z-index: 10;
+    white-space: nowrap;
+}
+.score-float.s100 { font-size: 18px; }
+.score-float.s200 { font-size: 22px; }
+.score-float.s400 { font-size: 28px; }
+@keyframes scoreFloat {
+    0%   { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-38px); }
+}
+
+/* 타이머 */
+.timer-section { margin-top: auto; }
+.timer-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.timer-text { font-size: 13px; font-weight: 700; color: #f0f0f0; }
+.timer-text.urgent { color: #d63031; animation: pulse 0.5s infinite; }
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* 5초 이하 화면 붉은 깜빡임 */
+@keyframes redFlash {
+    0%, 100% { background: transparent; }
+    50% { background: rgba(214, 48, 49, 0.15); }
+}
+.game-container.urgent-flash {
+    animation: redFlash 0.6s ease-in-out infinite;
+}
+.timer-feedback {
+    font-size: 14px;
+    font-weight: 800;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+.timer-feedback.show { opacity: 1; }
+.timer-feedback.plus  { color: #00b894; }
+.timer-feedback.minus { color: #d63031; }
+.timer-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 2px;
+}
+.timer-bar-bg.shake {
+    animation: timerShake var(--shake-speed, 0.3s) ease-in-out infinite;
+}
+@keyframes timerShake {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(calc(var(--shake-px, 1) * -1px), calc(var(--shake-px, 1) * 0.5px)); }
+    40% { transform: translate(calc(var(--shake-px, 1) * 1px), calc(var(--shake-px, 1) * -0.4px)); }
+    60% { transform: translate(calc(var(--shake-px, 1) * -0.6px), calc(var(--shake-px, 1) * 0.3px)); }
+    80% { transform: translate(calc(var(--shake-px, 1) * 0.6px), calc(var(--shake-px, 1) * -0.5px)); }
+}
+.timer-bar-fill {
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+    background: #00b894;
+    transition: background 0.3s;
+}
+
+/* 광고 영역 */
+.ad-placeholder {
+    width: 360px;
+    height: 202px;
+    background: rgba(255,255,255,0.02);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.15);
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+ *  결과 화면
+ * ============================================================ */
+#resultScreen {
+    position: relative;
+    padding: 28px 24px;
+    align-items: center;
+    min-height: 480px;
+    overflow: hidden;
+}
+.celebration-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+#resultScreen > *:not(.celebration-canvas) {
+    position: relative;
+    z-index: 2;
+}
+.result-title { font-size: 24px; font-weight: 800; margin-bottom: 20px; }
+.result-summary {
+    background: rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 18px 20px;
+    width: 100%;
+    margin-bottom: 24px;
+}
+.result-score {
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1;
+    text-align: center;
+    color: #ffd34d;
+    text-shadow: 0 0 16px rgba(255,211,77,0.3);
+    margin-bottom: 14px;
+}
+.result-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    font-size: 15px;
+}
+.result-row + .result-row { border-top: 1px solid rgba(255,255,255,0.08); }
+.result-label { color: #a0a0b0; }
+.result-value { font-weight: 700; }
+
+/* 룰렛 */
+.roulette-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.roulette-wrapper {
+    position: relative;
+    margin-bottom: 16px;
+}
+.roulette-pointer {
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 18px solid #e94560;
+    z-index: 2;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+}
+#rouletteCanvas { display: block; }
+.btn-spin {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.btn-spin:active { transform: scale(0.97); }
+.btn-spin:disabled { opacity: 0.5; cursor: not-allowed; }
+.roulette-result {
+    margin-top: 16px;
+    font-size: 20px;
+    font-weight: 800;
+    text-align: center;
+    display: none;
+}
+.roulette-result.show { display: block; }
+.btn-restart {
+    margin-top: 14px;
+    padding: 10px 32px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    background: transparent;
+    color: #a0a0b0;
+    font-size: 14px;
+    cursor: pointer;
+    display: none;
+}
+.btn-restart.show { display: inline-block; }
+.btn-restart:active { transform: scale(0.97); }
+
+/* 이탈 확인 모달 */
+.leave-modal {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.55);
+    z-index: 30;
+    padding: 24px;
+}
+.leave-modal.show { display: flex; }
+.leave-modal-card {
+    width: 100%;
+    background: #23263d;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 18px 16px;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.35);
+}
+.leave-modal-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #e9edf2;
+    margin-bottom: 14px;
+}
+.leave-modal-actions {
+    display: flex;
+    gap: 8px;
+}
+.leave-btn {
+    flex: 1;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 0;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.leave-btn.cancel {
+    background: rgba(255,255,255,0.12);
+    color: #d9e0ea;
+}
+.leave-btn.confirm {
+    background: linear-gradient(135deg, #e94560, #c0392b);
+    color: #fff;
+}
+
+/* 광고 시청 모달 */
+.ad-modal {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.3);
+    z-index: 29;
+}
+.ad-modal.show { display: flex; }
+.ad-modal-card {
+    position: relative;
+    width: 360px;
+    height: 202px;
+    background: #121525;
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 10px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ad-countdown {
+    font-size: 22px;
+    font-weight: 800;
+    color: #f4f6fa;
+    text-align: center;
+}
+.ad-close-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(255,255,255,0.16);
+    color: #fff;
+    cursor: pointer;
+    display: none;
+}
+.ad-close-btn.show { display: inline-block; }
+</style>
+</head>
+<body>
+<div class="game-container">
+
+    <!-- ── 시작 화면 ── -->
+    <div id="startScreen" class="screen active">
+        <button class="btn-bgm screen-bgm js-bgm-toggle" type="button" aria-label="배경음 끄기">🔊</button>
+        <div class="game-logo">⚡</div>
+        <div class="game-title">스피드 퀴즈</div>
+        <ul class="rules">
+            <li>제한 시간 <b>60초</b> 안에 최대한 많이 풀어보세요!</li>
+            <li>문제는 4지선다형으로 출제됩니다.</li>
+            <li>정답 시 제한 시간 <b style="color:#00b894">+1초</b>, 오답 시 <b style="color:#d63031">-1초</b></li>
+            <li>점수가 높으면 <b style="color:#00b894">룰렛 당첨률</b>이 높아집니다!</li>
+        </ul>
+        <button class="btn-start" id="btnStart">게임 시작</button>
+    </div>
+
+    <!-- ── 퀴즈 화면 ── -->
+    <div id="quizScreen" class="screen">
+        <button class="btn-bgm screen-bgm js-bgm-toggle" type="button" aria-label="배경음 끄기">🔊</button>
+        <div class="quiz-area">
+            <div class="quiz-header">
+                <span class="q-number" id="qNumber"></span>
+            </div>
+            <div class="quiz-question"><span class="quiz-question-text" id="qText"></span><span class="q-rate" id="qRate"></span></div>
+            <div class="combo-pop" id="comboPop"></div>
+            <div id="optionsContainer"></div>
+            <div class="timer-section">
+                <div class="timer-info">
+                    <span class="timer-text" id="timerText">60.0초</span>
+                    <span class="timer-feedback" id="timerFeedback"></span>
+                </div>
+                <div class="timer-bar-bg">
+                    <div class="timer-bar-fill" id="timerBar"></div>
+                </div>
+            </div>
+        </div>
+        <div class="ad-placeholder">광고 영역 (360×202)</div>
+    </div>
+
+    <!-- ── 결과 화면 ── -->
+    <div id="resultScreen" class="screen">
+        <button class="btn-bgm screen-bgm js-bgm-toggle" type="button" aria-label="배경음 끄기">🔊</button>
+        <canvas id="celebrationCanvas" class="celebration-canvas"></canvas>
+        <div class="result-title">🎉 게임 종료!</div>
+        <div class="result-summary">
+            <div class="result-score" id="resultScore"></div>
+            <div class="result-row">
+                <span class="result-label">정답률</span>
+                <span class="result-value" id="accuracyRate"></span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">최대 콤보</span>
+                <span class="result-value" id="maxCombo"></span>
+            </div>
+        </div>
+        <div class="roulette-section">
+            <div class="roulette-wrapper">
+                <div class="roulette-pointer"></div>
+                <canvas id="rouletteCanvas" width="220" height="220"></canvas>
+            </div>
+            <button class="btn-spin" id="btnSpin">🎰 룰렛 돌리기</button>
+            <div class="roulette-result" id="rouletteResult"></div>
+            <button class="btn-restart" id="btnRestart">광고 보고 다시 하기 (잔여 3회)</button>
+        </div>
+    </div>
+
+    <div id="leaveModal" class="leave-modal" aria-hidden="true">
+        <div class="leave-modal-card">
+            <div class="leave-modal-text">진행중인 퀴즈는 중단되며 기회는 복구되지 않습니다. 나가시겠습니까?</div>
+            <div class="leave-modal-actions">
+                <button type="button" class="leave-btn cancel" id="leaveCancel">계속</button>
+                <button type="button" class="leave-btn confirm" id="leaveConfirm">나가기</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="adModal" class="ad-modal" aria-hidden="true">
+        <div class="ad-modal-card">
+            <button type="button" id="adCloseBtn" class="ad-close-btn">광고 닫기</button>
+            <div id="adCountdownText" class="ad-countdown">광고 닫기까지 15초</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+/* ============================================================
+ *  문제 데이터
+ *  ─ 데모 버전은 스크립트 맨 아래의 QUESTIONS 배열을 사용합니다.
+ * ============================================================ */
+var QUESTIONS;
+
+/* ============================================================
+ *  설정
+ * ============================================================ */
+var INITIAL_TIME   = 60;   // 초기 시간(초)
+var CORRECT_BONUS  = 1;    // 정답 보너스(초)
+var WRONG_PENALTY  = 1;    // 오답 패널티(초)
+
+/* ============================================================
+ *  게임 상태
+ * ============================================================ */
+var currentQuestions = [];
+var currentIndex    = 0;
+var questionNumber  = 0;
+var correctCount    = 0;
+var totalAnswered   = 0;
+var totalScore      = 0;
+var comboStreak     = 0;
+var maxCombo        = 0;
+var endTime         = 0;
+var timerRAF        = null;
+var isAnswering     = false;
+var gameOver        = false;
+var audioCtx        = null;
+var bgmAudio        = new Audio("bgm.mp3");
+var finalAudio      = new Audio("final.mp3");
+var isBgmEnabled    = true;
+var BGM_BASE_VOLUME = 0.15;
+var bgmFadeTimer    = null;
+var finalFadeInTimer  = null;
+var finalFadeOutTimer = null;
+var finalFadeOutArmed = false;
+
+bgmAudio.loop = true;
+bgmAudio.preload = "auto";
+bgmAudio.volume = BGM_BASE_VOLUME;
+finalAudio.loop = false;
+finalAudio.preload = "auto";
+finalAudio.volume = 0;
+
+function clearFinalFadeTimers() {
+    if (finalFadeInTimer) {
+        clearInterval(finalFadeInTimer);
+        finalFadeInTimer = null;
+    }
+    if (finalFadeOutTimer) {
+        clearInterval(finalFadeOutTimer);
+        finalFadeOutTimer = null;
+    }
+}
+
+function startFinalTheme(fromStart) {
+    if (!isBgmEnabled) return;
+
+    var resetToStart = !!fromStart;
+
+    clearFinalFadeTimers();
+    finalFadeOutArmed = false;
+    finalAudio.pause();
+    if (resetToStart) finalAudio.currentTime = 0;
+    finalAudio.playbackRate = 1;
+    if (resetToStart || finalAudio.volume <= 0) finalAudio.volume = 0;
+
+    var playPromise = finalAudio.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(function () {
+            // 자동재생 제한 시 사용자 상호작용 후 재시도
+        });
+    }
+
+    var fadeInDuration = 500;
+    var stepMs = 30;
+    var steps = Math.max(1, Math.floor(fadeInDuration / stepMs));
+    var currentStep = 0;
+    finalFadeInTimer = setInterval(function () {
+        currentStep++;
+        finalAudio.volume = Math.min(BGM_BASE_VOLUME, BGM_BASE_VOLUME * (currentStep / steps));
+        if (currentStep >= steps) {
+            clearInterval(finalFadeInTimer);
+            finalFadeInTimer = null;
+        }
+    }, stepMs);
+}
+
+function stopFinalTheme(withFade) {
+    if (finalAudio.paused) {
+        finalAudio.currentTime = 0;
+        finalAudio.volume = 0;
+        finalFadeOutArmed = false;
+        clearFinalFadeTimers();
+        return;
+    }
+
+    clearFinalFadeTimers();
+
+    if (!withFade) {
+        finalAudio.pause();
+        finalAudio.currentTime = 0;
+        finalAudio.volume = 0;
+        finalFadeOutArmed = false;
+        return;
+    }
+
+    var fadeOutDuration = 2000;
+    var stepMs = 40;
+    var steps = Math.max(1, Math.floor(fadeOutDuration / stepMs));
+    var currentStep = 0;
+    var startVol = finalAudio.volume;
+
+    finalFadeOutTimer = setInterval(function () {
+        currentStep++;
+        var ratio = 1 - (currentStep / steps);
+        finalAudio.volume = Math.max(0, startVol * ratio);
+
+        if (currentStep >= steps) {
+            clearInterval(finalFadeOutTimer);
+            finalFadeOutTimer = null;
+            finalAudio.pause();
+            finalAudio.currentTime = 0;
+            finalAudio.volume = 0;
+            finalFadeOutArmed = false;
+            // 결과 화면이 활성 상태면 처음부터 페이드인 재생
+            if ($resultScreenEl && $resultScreenEl.classList.contains("active") && isBgmEnabled) {
+                startFinalTheme(true);
+            }
+        }
+    }, stepMs);
+}
+
+finalAudio.addEventListener("timeupdate", function () {
+    if (finalFadeOutArmed || finalAudio.paused || !isFinite(finalAudio.duration)) return;
+    if (finalAudio.duration - finalAudio.currentTime <= 2) {
+        finalFadeOutArmed = true;
+        stopFinalTheme(true);
+    }
+});
+
+finalAudio.addEventListener("ended", function () {
+    finalAudio.currentTime = 0;
+    finalAudio.volume = 0;
+    finalFadeOutArmed = false;
+    clearFinalFadeTimers();
+    // 결과 화면이 활성 상태면 처음부터 페이드인 재생
+    if ($resultScreenEl && $resultScreenEl.classList.contains("active") && isBgmEnabled) {
+        startFinalTheme(true);
+    }
+});
+
+function updateBgmButtonIcon() {
+    if (!$btnBgmList || !$btnBgmList.length) return;
+    for (var i = 0; i < $btnBgmList.length; i++) {
+        $btnBgmList[i].textContent = isBgmEnabled ? "🔊" : "🔇";
+        $btnBgmList[i].setAttribute("aria-label", isBgmEnabled ? "배경음 끄기" : "배경음 켜기");
+    }
+}
+
+function toggleBgm() {
+    isBgmEnabled = !isBgmEnabled;
+    if (isBgmEnabled) {
+        if ($resultScreenEl.classList.contains("active")) startFinalTheme();
+        else if ($quizScreen.classList.contains("active")) startBgm();
+        // 시작 화면에서는 재생하지 않고 이후 화면에서의 재생 여부만 토글
+    } else {
+        bgmAudio.pause();
+        bgmAudio.playbackRate = 1;
+        finalAudio.pause();
+        clearFinalFadeTimers();
+        finalFadeOutArmed = false;
+    }
+    updateBgmButtonIcon();
+}
+
+function startBgm() {
+    if (!isBgmEnabled) return;
+    if (bgmFadeTimer) {
+        clearInterval(bgmFadeTimer);
+        bgmFadeTimer = null;
+    }
+    bgmAudio.volume = BGM_BASE_VOLUME;
+    bgmAudio.playbackRate = 1;
+    var playPromise = bgmAudio.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(function () {
+            // 자동재생 제한 시 사용자 상호작용 후 재시도됨
+        });
+    }
+}
+
+function stopBgm() {
+    if (bgmAudio.paused) {
+        bgmAudio.currentTime = 0;
+        bgmAudio.playbackRate = 1;
+        bgmAudio.volume = BGM_BASE_VOLUME;
+        return;
+    }
+
+    if (bgmFadeTimer) clearInterval(bgmFadeTimer);
+
+    var fadeDuration = 450;
+    var stepMs = 30;
+    var steps = Math.max(1, Math.floor(fadeDuration / stepMs));
+    var currentStep = 0;
+    var startVol = bgmAudio.volume;
+
+    bgmFadeTimer = setInterval(function () {
+        currentStep++;
+        var ratio = 1 - (currentStep / steps);
+        bgmAudio.volume = Math.max(0, startVol * ratio);
+
+        if (currentStep >= steps) {
+            clearInterval(bgmFadeTimer);
+            bgmFadeTimer = null;
+            bgmAudio.pause();
+            bgmAudio.currentTime = 0;
+            bgmAudio.playbackRate = 1;
+            bgmAudio.volume = BGM_BASE_VOLUME;
+        }
+    }, stepMs);
+}
+
+function updateBgmSpeed(seconds) {
+    if (bgmAudio.paused) return;
+
+    if (seconds <= 15) {
+        // 15초→5초 구간에서 1.0x→2.0x 선형 증가, 5초 이하는 2.0x 유지
+        var progress = (15 - seconds) / 10;
+        if (progress < 0) progress = 0;
+        if (progress > 1) progress = 1;
+        var speed = 1 + progress;
+        bgmAudio.playbackRate = speed;
+    } else {
+        bgmAudio.playbackRate = 1;
+    }
+}
+
+function ensureAudioContext() {
+    if (!audioCtx) {
+        var Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return null;
+        audioCtx = new Ctx();
+    }
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    return audioCtx;
+}
+
+function playTone(freq, startAt, duration, type, volume) {
+    var ctx = ensureAudioContext();
+    if (!ctx) return;
+
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, startAt);
+
+    gain.gain.setValueAtTime(0.0001, startAt);
+    gain.gain.exponentialRampToValueAtTime(volume || 0.12, startAt + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(startAt);
+    osc.stop(startAt + duration + 0.02);
+}
+
+function playCorrectSound() {
+    var ctx = ensureAudioContext();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    // 한 옥타브 올린 솔-미-솔-미(G5-E5-G5-E5), 8분-8분-8분-점4분
+    // 기본 triangle + 약한 sine 레이어로 반짝이는 톤을 만듦
+    playTone(784, t, 0.10, "triangle", 0.4);
+    playTone(659.25, t + 0.12, 0.10, "triangle", 0.4);
+    playTone(784, t + 0.24, 0.10, "triangle", 0.4);
+    playTone(659.25, t + 0.36, 0.30, "triangle", 0.4);
+
+    playTone(784, t, 0.08, "sine", 0.1);
+    playTone(659.25, t + 0.12, 0.08, "sine", 0.1);
+    playTone(784, t + 0.24, 0.08, "sine", 0.1);
+    playTone(659.25, t + 0.36, 0.24, "sine", 0.1);
+}
+
+function playWrongSound() {
+    var ctx = ensureAudioContext();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    playTone(55, t, 0.16, "square", 0.6);
+    playTone(55, t + 0.10, 0.32, "square", 0.6);
+}
+
+function showCombo(streak) {
+    if (!$comboPop) return;
+
+    if (streak < 5) {
+        $comboPop.className = "combo-pop";
+        $comboPop.textContent = "";
+        return;
+    }
+
+    var isGold = streak >= 15;
+    var levelClass = isGold ? "gold" : "silver";
+    var numClass = isGold ? "combo-num gold" : "combo-num";
+    var textClass = isGold ? "combo-text gold" : "combo-text";
+    $comboPop.innerHTML = "<span class=\"" + numClass + "\">" + streak + "</span> <span class=\"" + textClass + "\">Combo!</span>";
+    $comboPop.className = "combo-pop " + levelClass;
+    void $comboPop.offsetWidth;
+    $comboPop.className = "combo-pop " + levelClass + " show";
+
+    playComboImpact(streak);
+    emitComboSparkles(isGold);
+}
+
+function emitComboSparkles(isGold) {
+    if (!$comboPop) return;
+    var count = isGold ? 15 : 10;
+
+    for (var i = 0; i < count; i++) {
+        var spark = document.createElement("span");
+        spark.className = "combo-spark" + (isGold ? " gold" : "");
+
+        var angle = Math.random() * Math.PI * 2;
+        var dist = (isGold ? 34 : 26) + Math.random() * (isGold ? 42 : 30);
+        var dx = Math.cos(angle) * dist;
+        var dy = Math.sin(angle) * dist * 0.9;
+        var size = (isGold ? 4.5 : 3.5) + Math.random() * 3;
+        var delay = Math.floor(Math.random() * 90);
+
+        spark.style.setProperty("--dx", dx.toFixed(1) + "px");
+        spark.style.setProperty("--dy", dy.toFixed(1) + "px");
+        spark.style.setProperty("--size", size.toFixed(1) + "px");
+        spark.style.setProperty("--delay", delay + "ms");
+
+        spark.addEventListener("animationend", function () {
+            this.remove();
+        });
+
+        $comboPop.appendChild(spark);
+    }
+}
+
+function playComboImpact(streak) {
+    var ctx = ensureAudioContext();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    var base = streak >= 15 ? 622.25 : 523.25;
+    var accent = streak >= 15 ? 783.99 : 659.25;
+    playTone(base, t, 0.05, "triangle", 0.18);
+    playTone(accent, t + 0.055, 0.09, "triangle", 0.18);
+}
+
+/* ============================================================
+ *  DOM 참조
+ * ============================================================ */
+var $qNumber         = document.getElementById("qNumber");
+var $qRate           = document.getElementById("qRate");
+var $qText           = document.getElementById("qText");
+var $optionsContainer = document.getElementById("optionsContainer");
+var $timerText       = document.getElementById("timerText");
+var $timerFeedback   = document.getElementById("timerFeedback");
+var $timerBar        = document.getElementById("timerBar");
+var $comboPop        = document.getElementById("comboPop");
+var $resultScore     = document.getElementById("resultScore");
+var $accuracyRate    = document.getElementById("accuracyRate");
+var $maxCombo        = document.getElementById("maxCombo");
+var $btnSpin         = document.getElementById("btnSpin");
+var $rouletteResult  = document.getElementById("rouletteResult");
+var $btnRestart      = document.getElementById("btnRestart");
+var $btnBgmList      = document.querySelectorAll(".js-bgm-toggle");
+var $celebrationCanvas = document.getElementById("celebrationCanvas");
+var $leaveModal      = document.getElementById("leaveModal");
+var $leaveCancel     = document.getElementById("leaveCancel");
+var $leaveConfirm    = document.getElementById("leaveConfirm");
+var $adModal         = document.getElementById("adModal");
+var $adCountdownText = document.getElementById("adCountdownText");
+var $adCloseBtn      = document.getElementById("adCloseBtn");
+var $container       = document.querySelector(".game-container");
+var $quizScreen      = document.getElementById("quizScreen");
+var $resultScreenEl  = document.getElementById("resultScreen");
+var $screens         = document.querySelectorAll(".screen");
+var $rouletteCanvas  = document.getElementById("rouletteCanvas");
+
+var celebrationRAF = null;
+var celebrationParticles = [];
+var celebrationStart = 0;
+var pendingLeaveAction = null;
+var bypassBeforeUnload = false;
+var bypassPopstateGuard = false;
+var adRemainSeconds = 2;
+var adCountdownTimer = null;
+var spinRemain = 1;
+
+function openLeaveModal(onConfirm) {
+    pendingLeaveAction = onConfirm || null;
+    $leaveModal.classList.add("show");
+    $leaveModal.setAttribute("aria-hidden", "false");
+}
+
+function closeLeaveModal() {
+    pendingLeaveAction = null;
+    $leaveModal.classList.remove("show");
+    $leaveModal.setAttribute("aria-hidden", "true");
+}
+
+function closeAdModal() {
+    if (adCountdownTimer) {
+        clearInterval(adCountdownTimer);
+        adCountdownTimer = null;
+    }
+    $adModal.classList.remove("show");
+    $adModal.setAttribute("aria-hidden", "true");
+}
+
+function openAdModal() {
+    // 광고 모달 진입 시 배경음/결과음을 즉시 정지
+    if (bgmFadeTimer) {
+        clearInterval(bgmFadeTimer);
+        bgmFadeTimer = null;
+    }
+    bgmAudio.pause();
+    bgmAudio.playbackRate = 1;
+    stopFinalTheme(false);
+
+    closeAdModal();
+    adRemainSeconds = 2;
+    $adCloseBtn.classList.remove("show");
+    $adCountdownText.textContent = "광고 시청중...";
+    $adModal.classList.add("show");
+    $adModal.setAttribute("aria-hidden", "false");
+
+    adCountdownTimer = setInterval(function () {
+        adRemainSeconds--;
+        if (adRemainSeconds <= 0) {
+            $adCountdownText.textContent = "광고 시청 완료";
+            $adCloseBtn.classList.add("show");
+            clearInterval(adCountdownTimer);
+            adCountdownTimer = null;
+        }
+    }, 1000);
+}
+
+function stopCelebrationEffect() {
+    if (celebrationRAF) {
+        cancelAnimationFrame(celebrationRAF);
+        celebrationRAF = null;
+    }
+    celebrationParticles = [];
+    if ($celebrationCanvas) {
+        var ctx = $celebrationCanvas.getContext("2d");
+        ctx.clearRect(0, 0, $celebrationCanvas.width, $celebrationCanvas.height);
+    }
+}
+
+function burstConfetti(side) {
+    var w = $celebrationCanvas.width;
+    var h = $celebrationCanvas.height;
+    var originX = side === "left" ? 14 : (w - 14);
+    var originY = h * (0.45 + Math.random() * 0.25);
+    var colors = ["#ff7675", "#fdcb6e", "#55efc4", "#74b9ff", "#ffeaa7", "#fab1a0"];
+
+    for (var i = 0; i < 18; i++) {
+        var dir = side === "left" ? 1 : -1;
+        celebrationParticles.push({
+            x: originX,
+            y: originY,
+            vx: dir * (1.8 + Math.random() * 3.2),
+            vy: -4.6 + Math.random() * 2.2,
+            g: 0.16 + Math.random() * 0.08,
+            size: 3 + Math.random() * 3,
+            life: 55 + Math.random() * 25,
+            rot: Math.random() * Math.PI * 2,
+            vr: (Math.random() - 0.5) * 0.35,
+            color: colors[Math.floor(Math.random() * colors.length)]
+        });
+    }
+}
+
+function runCelebrationEffect() {
+    if (!$celebrationCanvas) return;
+    stopCelebrationEffect();
+
+    var rect = $resultScreenEl.getBoundingClientRect();
+    $celebrationCanvas.width = Math.floor(rect.width);
+    $celebrationCanvas.height = Math.floor(rect.height);
+
+    var ctx = $celebrationCanvas.getContext("2d");
+    celebrationStart = Date.now();
+    var lastBurst = 0;
+
+    function frame() {
+        var elapsed = Date.now() - celebrationStart;
+        var shouldBurst = elapsed < 4000 && (elapsed - lastBurst > 130);
+        if (shouldBurst) {
+            burstConfetti("left");
+            burstConfetti("right");
+            lastBurst = elapsed;
+        }
+
+        ctx.clearRect(0, 0, $celebrationCanvas.width, $celebrationCanvas.height);
+
+        var writeIdx = 0;
+        for (var i = 0; i < celebrationParticles.length; i++) {
+            var p = celebrationParticles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += p.g;
+            p.rot += p.vr;
+            p.life -= 1;
+
+            if (p.life <= 0 || p.y > $celebrationCanvas.height + 20) continue;
+
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot);
+            ctx.globalAlpha = Math.max(0, p.life / 80);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
+            ctx.restore();
+
+            celebrationParticles[writeIdx++] = p;
+        }
+        celebrationParticles.length = writeIdx;
+
+        if (elapsed < 4000 || celebrationParticles.length > 0) {
+            celebrationRAF = requestAnimationFrame(frame);
+        } else {
+            stopCelebrationEffect();
+        }
+    }
+
+    celebrationRAF = requestAnimationFrame(frame);
+}
+
+/* ============================================================
+ *  화면 전환
+ * ============================================================ */
+function showScreen(id) {
+    for (var i = 0; i < $screens.length; i++) $screens[i].classList.remove("active");
+    document.getElementById(id).classList.add("active");
+    if (id !== "resultScreen") {
+        stopCelebrationEffect();
+        stopFinalTheme(false);
+        closeAdModal();
+    }
+    if (id === "startScreen") stopBgm();
+}
+
+/* ============================================================
+ *  게임 시작
+ * ============================================================ */
+function startGame() {
+
+    stopFinalTheme(false);
+    startBgm();
+
+    currentQuestions = QUESTIONS.map(function (q) {
+        return Object.assign({}, q, { rate: Math.floor(Math.random() * 31) + 65 });
+    });
+    // 셔플
+    for (var i = currentQuestions.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = currentQuestions[i];
+        currentQuestions[i] = currentQuestions[j];
+        currentQuestions[j] = tmp;
+    }
+
+    currentIndex  = 0;
+    questionNumber = 0;
+    correctCount  = 0;
+    totalAnswered = 0;
+    totalScore    = 0;
+    comboStreak   = 0;
+    maxCombo      = 0;
+    isAnswering   = false;
+    gameOver      = false;
+
+    showCombo(0);
+
+    endTime = Date.now() + INITIAL_TIME * 1000;
+
+    showScreen("quizScreen");
+    showQuestion();
+    tickTimer();
+}
+
+/* ============================================================
+ *  문제 표시
+ * ============================================================ */
+function showQuestion() {
+    if (gameOver) return;
+    // 모든 문제를 다 풀었으면 게임 종료 (중복 출제 방지)
+    if (currentIndex >= currentQuestions.length) { endGame(); return; }
+
+    questionNumber++;
+    var q = currentQuestions[currentIndex];
+
+    $qNumber.textContent = "Q" + questionNumber;
+    $qRate.textContent   = "정답률: " + q.rate + "%";
+    $qText.textContent   = q.text;
+
+    $optionsContainer.innerHTML = "";
+
+    // 4지선다 선택지 셔플 (원래 인덱스 유지)
+    var order = q.choices.map(function (_, i) { return i; });
+    for (var si = order.length - 1; si > 0; si--) {
+        var sj = Math.floor(Math.random() * (si + 1));
+        var stmp = order[si]; order[si] = order[sj]; order[sj] = stmp;
+    }
+    var div = document.createElement("div");
+    div.className = "quiz-options";
+    order.forEach(function (origIdx) {
+        var btn = document.createElement("button");
+        btn.className = "opt-btn";
+        btn.textContent = q.choices[origIdx];
+        btn.setAttribute("data-orig", origIdx);
+        btn.addEventListener("click", function () { selectAnswer(origIdx); });
+        div.appendChild(btn);
+    });
+    $optionsContainer.appendChild(div);
+
+    isAnswering = false;
+}
+
+/* ============================================================
+ *  정답 선택
+ * ============================================================ */
+function selectAnswer(selected) {
+    if (isAnswering || gameOver) return;
+    isAnswering = true;
+
+    var q = currentQuestions[currentIndex];
+    var isCorrect = selected === q.answer;
+    totalAnswered++;
+
+    // 버튼 하이라이트
+    var buttons = $optionsContainer.querySelectorAll("button");
+    for (var i = 0; i < buttons.length; i++) {
+        buttons[i].style.pointerEvents = "none";
+        var orig = buttons[i].hasAttribute("data-orig") ? parseInt(buttons[i].getAttribute("data-orig"), 10) : i;
+        if (orig === q.answer) buttons[i].classList.add("correct");
+        if (orig === selected && !isCorrect) buttons[i].classList.add("wrong");
+    }
+
+    // 시간 보정
+    if (isCorrect) {
+        correctCount++;
+        comboStreak++;
+        if (comboStreak > maxCombo) maxCombo = comboStreak;
+
+        var scorePerCorrect = 100;
+        if (comboStreak >= 15) scorePerCorrect = 400;
+        else if (comboStreak >= 5) scorePerCorrect = 200;
+        totalScore += scorePerCorrect;
+
+        endTime += CORRECT_BONUS * 1000;
+        $timerFeedback.textContent = "+" + CORRECT_BONUS + "초";
+        $timerFeedback.className = "timer-feedback show plus";
+        showCombo(comboStreak);
+        playCorrectSound();
+
+        // 점수 플로팅 텍스트
+        var sizeClass = scorePerCorrect >= 400 ? "s400" : scorePerCorrect >= 200 ? "s200" : "s100";
+        var floatEl = document.createElement("span");
+        floatEl.className = "score-float " + sizeClass;
+        floatEl.textContent = "+" + scorePerCorrect;
+        var correctBtn = null;
+        for (var ci = 0; ci < buttons.length; ci++) {
+            if (buttons[ci].classList.contains("correct")) { correctBtn = buttons[ci]; break; }
+        }
+        if (correctBtn) {
+            correctBtn.style.position = "relative";
+            correctBtn.style.overflow = "visible";
+            floatEl.style.top = "-4px";
+            correctBtn.appendChild(floatEl);
+        }
+        floatEl.addEventListener("animationend", function () { this.remove(); });
+    } else {
+        comboStreak = 0;
+        totalScore = Math.max(0, totalScore - 10);
+        endTime -= WRONG_PENALTY * 1000;
+        $timerFeedback.textContent = "-" + WRONG_PENALTY + "초";
+        $timerFeedback.className = "timer-feedback show minus";
+        showCombo(0);
+        playWrongSound();
+    }
+
+    var delay = 1000;
+    setTimeout(function () {
+        $timerFeedback.className = "timer-feedback";
+        currentIndex++;
+        showQuestion();
+    }, delay);
+}
+
+/* ============================================================
+ *  타이머
+ * ============================================================ */
+function tickTimer() {
+    if (gameOver) return;
+
+    var remaining = Math.max(0, endTime - Date.now());
+    var seconds   = remaining / 1000;
+    var pct       = Math.min(100, (remaining / (INITIAL_TIME * 1000)) * 100);
+
+    $timerText.textContent = seconds.toFixed(1) + "초";
+    updateBgmSpeed(seconds);
+
+    // 긴급 효과
+    if (seconds <= 5) {
+        $timerText.classList.add("urgent");
+        $container.classList.add("urgent-flash");
+    } else {
+        $timerText.classList.remove("urgent");
+        $container.classList.remove("urgent-flash");
+    }
+
+    // 타이머 바 흔들림 (10초 이하부터 점진적 강화)
+    var $timerBarBg = $timerBar.parentElement;
+    if (seconds <= 10) {
+        var shakeProg = Math.min(1, (10 - seconds) / 5); // 0→1 (10초→5초)
+        var shakePx = 0.5 + shakeProg * 1.5;    // 0.5px → 2px
+        var shakeSpeed = 0.35 - shakeProg * 0.1; // 0.35s → 0.25s
+        $timerBarBg.style.setProperty("--shake-px", shakePx.toFixed(1));
+        $timerBarBg.style.setProperty("--shake-speed", shakeSpeed.toFixed(2) + "s");
+        $timerBarBg.classList.add("shake");
+    } else {
+        $timerBarBg.classList.remove("shake");
+    }
+
+    // 게이지 바
+    $timerBar.style.width = pct + "%";
+    if (pct > 50)      $timerBar.style.background = "#00b894";
+    else if (pct > 25) $timerBar.style.background = "#fdcb6e";
+    else               $timerBar.style.background = "#d63031";
+
+    if (remaining <= 0) { endGame(); return; }
+
+    timerRAF = requestAnimationFrame(tickTimer);
+}
+
+/* ============================================================
+ *  게임 종료
+ * ============================================================ */
+function endGame() {
+    if (gameOver) return;
+    gameOver = true;
+
+    stopBgm();
+
+    if (timerRAF) { cancelAnimationFrame(timerRAF); timerRAF = null; }
+
+    // 붉은 깜빡임 효과 제거
+    $container.classList.remove("urgent-flash");
+    $timerText.classList.remove("urgent");
+    $timerBar.parentElement.classList.remove("shake");
+
+    $resultScore.textContent = totalScore + "점";
+    var rate = totalAnswered > 0 ? Math.round((correctCount / totalAnswered) * 100) : 0;
+    $accuracyRate.textContent = rate + "%";
+    $maxCombo.textContent = maxCombo + "콤보";
+
+    // 룰렛 초기화
+    spinRemain = 1;
+    if (totalScore >= 4000) spinRemain += 2; // 4000점 이상이면 총 3회
+    else if (totalScore >= 2000) spinRemain += 1; // 2000점 이상이면 총 2회
+    $btnSpin.disabled = false;
+    $btnSpin.textContent = "🎰 룰렛 돌리기 (잔여 " + spinRemain + "회)";
+    $rouletteResult.className = "roulette-result";
+    $btnRestart.className = "btn-restart";
+
+    showScreen("resultScreen");
+    drawRoulette(0);
+    runCelebrationEffect();
+    startFinalTheme(true);
+}
+
+/* ============================================================
+ *  룰렛 — 등수 설정
+ *  ─ 등수를 추가/삭제하려면 PRIZES 배열만 수정하세요.
+ *  ─ count: 룰렛 세그먼트 수, probability: 당첨 확률 (합계 1)
+ *  ─ colors: 세그먼트 색상 (여러 개면 순환), resultColor: 결과 텍스트 색
+ * ============================================================ */
+var PRIZES = [
+    // 분기 - probabilityHigh = 점수 1500점 이상 | probabilityLow = 점수 1500점 미만
+    { label: "1등", colors: ["#fdcb6e"], count: 1, probabilityHigh: 0.03,  probabilityLow: 0.01,  emoji: "🎊", message: "축하합니다! 1등 당첨!", resultColor: "#fdcb6e" },
+    { label: "2등", colors: ["#74b9ff"], count: 3, probabilityHigh: 0.2,  probabilityLow: 0.1,  emoji: "🎉", message: "2등 당첨!\n1,000이니 증정!", resultColor: "#74b9ff" },
+    { label: "3등", colors: ["#636e72"], count: 6, probabilityHigh: 0.77,  probabilityLow: 0.88,  emoji: "🎉", message: "3등 당첨!\n100이니 증정!", resultColor: "#74b9ff" }
+];
+
+// PRIZES로부터 세그먼트 자동 생성 (균등 분배)
+var SEGMENTS = (function () {
+    var total = 0;
+    PRIZES.forEach(function (p) { total += p.count; });
+    var result = new Array(total);
+    PRIZES.forEach(function (prize) {
+        var step = total / prize.count;
+        for (var i = 0; i < prize.count; i++) {
+            var idx = Math.round(i * step) % total;
+            while (result[idx]) idx = (idx + 1) % total;
+            result[idx] = { label: prize.label, color: prize.colors[i % prize.colors.length] };
+        }
+    });
+    return result;
+})();
+var SEG_COUNT = SEGMENTS.length;
+var SEG_ANGLE = (2 * Math.PI) / SEG_COUNT;
+
+function drawRoulette(angle) {
+    var ctx    = $rouletteCanvas.getContext("2d");
+    var cx = $rouletteCanvas.width / 2;
+    var cy = $rouletteCanvas.height / 2;
+    var r  = cx - 10;
+
+    ctx.clearRect(0, 0, $rouletteCanvas.width, $rouletteCanvas.height);
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(angle);
+
+    for (var i = 0; i < SEG_COUNT; i++) {
+        var startA = i * SEG_ANGLE;
+        var endA   = (i + 1) * SEG_ANGLE;
+
+        // 세그먼트
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, r, startA, endA);
+        ctx.closePath();
+        ctx.fillStyle = SEGMENTS[i].color;
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,0.25)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // 라벨
+        ctx.save();
+        ctx.rotate(startA + SEG_ANGLE / 2);
+        ctx.textAlign    = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle    = "#fff";
+        ctx.font = "bold 13px 'Malgun Gothic', sans-serif";
+        ctx.shadowColor   = "rgba(0,0,0,0.5)";
+        ctx.shadowBlur    = 3;
+        ctx.fillText(SEGMENTS[i].label, r * 0.6, 0);
+        ctx.shadowBlur = 0;
+        ctx.restore();
+    }
+
+    // 중앙 원
+    ctx.beginPath();
+    ctx.arc(0, 0, 18, 0, 2 * Math.PI);
+    ctx.fillStyle = "#1a1a2e";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.4)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.restore();
+
+    // 외곽 테두리
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+    ctx.strokeStyle = "rgba(255,255,255,0.15)";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+}
+
+function spinRoulette() {
+    if (spinRemain <= 0) return;
+    spinRemain--;
+    $btnSpin.disabled = true;
+    $btnSpin.textContent = "🎰 룰렛 돌리기 (잔여 " + spinRemain + "회)";
+
+    try {
+        // 점수에 따라 확률 테이블 분기
+        var useHighProb = totalScore >= 1500;
+        var probKey = useHighProb ? "probabilityHigh" : "probabilityLow";
+
+        var rand = Math.random();
+        var cumulative = 0;
+        var winPrize = PRIZES[PRIZES.length - 1];
+        for (var p = 0; p < PRIZES.length; p++) {
+            var prob = Number(PRIZES[p][probKey]);
+            if (!isFinite(prob) || prob < 0) {
+                // 분기 확률이 없거나 잘못된 경우 high 확률로 폴백
+                prob = Number(PRIZES[p].probabilityHigh) || 0;
+            }
+            cumulative += prob;
+            if (rand < cumulative) { winPrize = PRIZES[p]; break; }
+        }
+
+        // 해당 등수의 세그먼트 중 하나를 랜덤 선택
+        var indices = [];
+        for (var i = 0; i < SEG_COUNT; i++) {
+            if (SEGMENTS[i].label === winPrize.label) indices.push(i);
+        }
+        // 방어 코드: 라벨 매칭 실패 시 전체 세그먼트 중 랜덤
+        if (!indices.length) {
+            for (var k = 0; k < SEG_COUNT; k++) indices.push(k);
+        }
+        var targetIdx = indices[Math.floor(Math.random() * indices.length)];
+
+        // 포인터는 캔버스 상단 중앙 = -π/2 위치
+        var segCenter   = targetIdx * SEG_ANGLE + SEG_ANGLE / 2;
+        var extraSpins  = (5 + Math.floor(Math.random() * 3)) * 2 * Math.PI;
+        var targetAngle = -Math.PI / 2 - segCenter + extraSpins;
+        if (targetAngle < 0) targetAngle += Math.PI * 2 * 8;
+
+        var duration  = 3500;
+        var startTime = Date.now();
+
+        function animate() {
+            var elapsed  = Date.now() - startTime;
+            var progress = Math.min(1, elapsed / duration);
+            // ease-out cubic
+            var eased = 1 - Math.pow(1 - progress, 3);
+
+            drawRoulette(targetAngle * eased);
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                showRouletteResult(winPrize);
+            }
+        }
+
+        requestAnimationFrame(animate);
+    } catch (e) {
+        // 오류 시 버튼이 잠긴 채로 남지 않도록 복구
+        $btnSpin.disabled = false;
+        throw e;
+    }
+}
+
+function showRouletteResult(prize) {
+    $rouletteResult.textContent = prize.emoji + " " + prize.message;
+    $rouletteResult.style.color = prize.resultColor;
+    $rouletteResult.className = "roulette-result show";
+    if (spinRemain > 0) {
+        $btnSpin.disabled = false;
+    } else {
+        $btnRestart.className = "btn-restart show";
+    }
+}
+
+function isQuizInProgress() {
+    return $quizScreen.classList.contains("active") && !gameOver;
+}
+
+/* ============================================================
+ *  이벤트 바인딩
+ * ============================================================ */
+document.getElementById("btnStart").addEventListener("click", startGame);
+$btnSpin.addEventListener("click", spinRoulette);
+for (var i = 0; i < $btnBgmList.length; i++) {
+    $btnBgmList[i].addEventListener("click", toggleBgm);
+}
+$btnRestart.addEventListener("click", function () {
+    openAdModal();
+});
+
+$adCloseBtn.addEventListener("click", function () {
+    closeAdModal();
+    showScreen("startScreen");
+});
+
+$leaveCancel.addEventListener("click", closeLeaveModal);
+$leaveConfirm.addEventListener("click", function () {
+    var action = pendingLeaveAction;
+    closeLeaveModal();
+    if (action) action();
+});
+
+window.addEventListener("keydown", function (event) {
+    if (!isQuizInProgress()) return;
+    var isReloadKey = event.key === "F5" || ((event.ctrlKey || event.metaKey) && (event.key === "r" || event.key === "R"));
+    if (!isReloadKey) return;
+
+    event.preventDefault();
+    openLeaveModal(function () {
+        bypassBeforeUnload = true;
+        location.reload();
+    });
+});
+
+if (!history.state || !history.state.speedQuizGuard) {
+    history.pushState({ speedQuizGuard: true }, "", location.href);
+}
+window.addEventListener("popstate", function () {
+    if (bypassPopstateGuard || !isQuizInProgress()) {
+        bypassPopstateGuard = false;
+        return;
+    }
+
+    history.pushState({ speedQuizGuard: true }, "", location.href);
+    openLeaveModal(function () {
+        bypassPopstateGuard = true;
+        history.back();
+    });
+});
+
+window.addEventListener("beforeunload", function (event) {
+    if (!isQuizInProgress() || bypassBeforeUnload) return;
+    event.preventDefault();
+    event.returnValue = "";
+    return "";
+});
+
+/* ============================================================
+ *  문제 데이터 (데모 단일 파일 버전)
+ * ============================================================ */
+var QUESTIONS = [
+    {
+        "text": "'젤다의 전설' 시리즈에서 맨날 구르면서 항아리를 깨고 다니는 '초록색 옷 입은 애'의 이름은?",
+        "choices": ["젤다", "링크", "루이지", "피터팬"],
+        "answer": 1
+    },
+    {
+        "text": "e스포츠 역사상 가장 유명한 라이벌 매치인 '임진록'에서, 상대에게 3연속 벙커링을 시전한 전 프로게이머는?",
+        "choices": ["홍진호", "임요환", "이윤열", "최연성"],
+        "answer": 1
+    },
+    {
+        "text": "발매 후 모두의 기대를 배신했지만, 수년간의 패치 끝에 진짜 '우주 갓겜'이 된 게임은?",
+        "choices": ["사이버펑크 2077", "노 맨즈 스카이", "스타필드", "앤섬"],
+        "answer": 1
+    },
+    {
+        "text": "'배틀그라운드'에서 수많은 유저들을 설레게 하는, 최후의 1인이 되었을 때 화면에 뜨는 문구는?",
+        "choices": ["이겼닭! 오늘 저녁은 치킨이닭!", "승리! 오늘 저녁은 삼겹살이다!", "챔피언! 오늘 저녁은 피자다!", "생존! 오늘 저녁은 국밥이다!"],
+        "answer": 0
+    },
+    {
+        "text": "'오버워치'에서 \"석양이 진다...\"라는 대사 하나로 모두를 숨게 만들었던 영웅의 현재 이름은? (2026년 기준)",
+        "choices": ["맥크리", "캐서디", "애쉬", "솔저: 76"],
+        "answer": 1
+    },
+    {
+        "text": "'리그 오브 레전드'에서 '페이커' 이상혁 선수가 2023년 롤드컵 우승 후 자신의 4번째 우승 스킨으로 선택한 챔피언은?",
+        "choices": ["오리아나", "아리", "아지르", "르블랑"],
+        "answer": 0
+    },
+    {
+        "text": "귀여운 젤리빈들이 뛰어다니는 게임 '폴 가이즈(Fall Guys)' 캐릭터들의 공식적인 설정상 키는?",
+        "choices": ["약 50cm", "약 1m", "약 1.8m", "약 2.5m"],
+        "answer": 2
+    },
+    {
+        "text": "닌텐도 '동물의 숲' 시리즈에서 유저에게 평생 대출금을 갚게 만드는 악덕 NPC의 이름은?",
+        "choices": ["너굴", "여울", "콩돌", "밤돌"],
+        "answer": 0
+    },
+    {
+        "text": "'마인크래프트'에서 유저 몰래 등 뒤로 다가와 터지며, 열심히 지은 집과 멘탈을 동시에 날려버리는 몬스터는?",
+        "choices": ["좀비", "스켈레톤", "크리퍼", "엔더맨"],
+        "answer": 2
+    },
+    {
+        "text": "넥슨의 서브컬처 게임 '블루 아카이브'의 플레이어들을 부르는 명칭은?",
+        "choices": ["선생님", "지휘관", "트레이너", "여행자"],
+        "answer": 0
+    },
+    {
+        "text": "밸브 코퍼레이션이 절대 세지 못하는 숫자로, 게이머들이 평생 후속작을 기다리게 만든 마의 숫자는?",
+        "choices": ["2", "3", "4", "5"],
+        "answer": 1
+    },
+    {
+        "text": "'GTA5'에서 요가를 하다가 화를 내고, 아들과 거리를 좁히지 못하는 등 다사다난한 중년의 위기를 겪는 주인공의 이름은?",
+        "choices": ["트레버", "프랭클린", "마이클", "라마"],
+        "answer": 2
+    },
+    {
+        "text": "'엘든 링'에서 수많은 뉴비들을 입구컷 시키며 '트리가드'라는 이름으로 악명 높은 보스가 타고 있는 것은?",
+        "choices": ["말", "드래곤", "거북이", "돼지"],
+        "answer": 0
+    },
+    {
+        "text": "'갓 오브 워' 시리즈의 주인공 크레토스가 북유럽 신화로 넘어와서 아들 아트레우스를 부를 때 쓰는 가장 친근한 호칭은?",
+        "choices": ["Son!", "Boy!", "Kid!", "Hey!"],
+        "answer": 1
+    },
+    {
+        "text": "닌텐도의 영원한 마스코트, '슈퍼 마리오' 형제의 원래 직업은?",
+        "choices": ["배관공", "목수", "버섯 채집가", "공주 경호원"],
+        "answer": 0
+    },
+    {
+        "text": "스팀 대규모 연쇄 할인으로 전 세계 게이머들의 지갑을 털어가는 밸브 코퍼레이션의 수장 이름은?",
+        "choices": ["일론 머스크", "게이브 뉴웰", "토드 하워드", "미야자키 히데타카"],
+        "answer": 1
+    },
+    {
+        "text": "'P의 거짓'에서 주인공 P가 인간성에 다가가기 위해 게임 내내 선택해야 하는 주요 행동은?",
+        "choices": ["거짓말하기", "진실만 말하기", "노래 부르기", "춤추기"],
+        "answer": 0
+    },
+    {
+        "text": "'디아블로 3' 출시 초기, 수많은 게이머들을 로그인 창에서 밤새게 만들었던 서버 접속 대기열 에러 코드는?",
+        "choices": ["에러 37", "에러 404", "에러 502", "에러 999"],
+        "answer": 0
+    },
+    {
+        "text": "'던전앤파이터' 과거 유저들이 무기 강화를 하다 아이템이 깨졌을 때 가장 원망했던 악명 높은 강화 NPC의 이름은?",
+        "choices": ["세리아", "키리", "단진", "칸나"],
+        "answer": 1
+    },
+    {
+        "text": "'리그 오브 레전드'에서 '바론 남작'을 처치하면 얻는 효과는?",
+        "choices": ["골드만 획득", "경험치만 획득", "팀 전체 강화 버프", "즉시 승리"],
+        "answer": 2
+    },
+    {
+        "text": "'마인크래프트'에서 엔드 포탈로 이동할 수 있는 곳은?",
+        "choices": ["네더", "오버월드", "딥 다크", "엔더 월드"],
+        "answer": 3
+    },
+    {
+        "text": "'오버워치'에서 겐지의 궁극기 이름은?",
+        "choices": ["용검", "질풍참", "수리검 폭풍", "용의 분노"],
+        "answer": 0
+    },
+    {
+        "text": "'배틀그라운드'에서 게임 시작 시 기본 상태는?",
+        "choices": ["권총을 들고 시작", "아무것도 없음", "수류탄 보유", "방탄복 착용"],
+        "answer": 1
+    },
+    {
+        "text": "'포켓몬스터' 시리즈에서 몬스터를 잡을 때 사용할 수 있는 도구의 이름인 것은?",
+        "choices": ["마스터볼", "드래곤볼", "에너지팩", "붐볼"],
+        "answer": 0
+    },
+    {
+        "text": "'다크 소울' 시리즈로 유명한 개발사는?",
+        "choices": ["캡콤", "프롬 소프트웨어", "유비소프트", "EA"],
+        "answer": 1
+    },
+    {
+        "text": "'심즈' 시리즈에서 심들이 사용하는 언어의 이름은?",
+        "choices": ["심즈어", "심리쉬", "엘프어", "노바어"],
+        "answer": 1
+    },
+    {
+        "text": "'GTA' 시리즈의 풀 네임은?",
+        "choices": ["Great Theft Auto", "Grand Theft Auto", "Global Transport Action", "Grand Track Arena"],
+        "answer": 1
+    },
+    {
+        "text": "'배틀그라운드'의 클래식 모드에서 한 매치에 참여하는 최대 기본 인원 수는?",
+        "choices": ["50명", "64명", "100명", "150명"],
+        "answer": 2
+    },
+    {
+        "text": "닌텐도의 대표작 '슈퍼 마리오 브라더스'에서 마리오의 쌍둥이 동생 이름은?",
+        "choices": ["와리오", "쿠파", "키노피오", "루이지"],
+        "answer": 3
+    },
+    {
+        "text": "2022년 최다 GOTY를 수상한 '엘든 링'의 세계관 제작에 참여한 유명 판타지 소설 작가는?",
+        "choices": ["J.R.R. 톨킨", "조지 R.R. 마틴", "J.K. 롤링", "스티븐 킹"],
+        "answer": 1
+    },
+    {
+        "text": "'로스트아크'에서 유저 간 거래소 및 경매장에서 주로 사용되는 재화는?",
+        "choices": ["골드", "실버", "크리스탈", "페온"],
+        "answer": 0
+    },
+    {
+        "text": "'GTA5' 의 주 무대가 되는 도시의 이름은?",
+        "choices": ["리버티 시티", "바이스 시티", "로스 산토스", "산 피에로"],
+        "answer": 2
+    },
+    {
+        "text": "'던전앤파이터' 이야기 속 주 무대가 되는 장소의 이름은?",
+        "choices": ["아제로스", "아라드", "빅토리아", "성역"],
+        "answer": 1
+    },
+    {
+        "text": "'포켓몬스터' 1세대 게임에서 처음에 고를 수 있는 스타팅 포켓몬이 아닌 것은?",
+        "choices": ["이상해씨", "파이리", "꼬부기", "푸린"],
+        "answer": 3
+    },
+    {
+        "text": "'발로란트'에서 공격팀이 설치해야 하는 폭탄의 명칭은?",
+        "choices": ["스파이크", "C4", "EMP", "코어"],
+        "answer": 0
+    },
+    {
+        "text": "'서든어택'을 현재 서비스하고 있는 게임사는?",
+        "choices": ["넷마블", "넥슨", "엔씨소프트", "크래프톤"],
+        "answer": 1
+    },
+       {
+        "text": "스타크래프트에서 '마이 라이프 포 아이어!'를 외치는 프로토스의 기본 보병 유닛은?",
+        "choices": ["드라군(용기병)", "하이 템플러(고위 기사)", "질럿(광전사)", "다크 템플러(암흑 기사)"],
+        "answer": 2
+    },
+    {
+        "text": "포켓몬스터 도감 번호 001번이자, '풀/독' 타입의 근본 스타팅 포켓몬은?",
+        "choices": ["이상해씨", "파이리", "꼬부기", "피카츄"],
+        "answer": 0
+    },
+    {
+        "text": "오버워치에서 '이것도 너프해 보시지!'라는 도발적인 대사와 함께 로봇을 자폭시켜버리는 한국 국적의 영웅은?",
+        "choices": ["트레이서", "메이", "위도우메이커", "D.Va(디바)"],
+        "answer": 3
+    },
+    {
+        "text": "마인크래프트를 처음 시작하면 기본적으로 적용되어 있는, 하늘색 셔츠를 입은 듬직한 기본 캐릭터의 이름은?",
+        "choices": ["알렉스", "스티브", "히로빈", "노치"],
+        "answer": 1
+    },
+    {
+        "text": "로스트아크 유저들에게 '빛'이라고 불리며, 매번 진정성 있는 소통으로 감동을 주었던 디렉터의 이름은?",
+        "choices": ["강원기", "김대일", "금강선", "김택진"],
+        "answer": 2
+    },
+    {
+        "text": "위쳐 3에서 위급한 상황임에도 주인공 게롤트를 노름판에 빠지게 만든 마성의 카드 게임은?",
+        "choices": ["궨트", "포커", "블랙잭", "마작"],
+        "answer": 0
+    },
+    {
+        "text": "하프라이프 시리즈의 주인공 '고든 프리맨'을 상징하는 무기이자, 외계인과 상자를 모두 부술 수 있는 만능 도구는?",
+        "choices": ["전기톱", "빠루", "렌치", "프라이팬"],
+        "answer": 1
+    },
+    {
+        "text": "레드 데드 리뎀션 2의 주인공의 이름은?",
+        "choices": ["존 마스턴", "더치 반 데 린드", "마이카 벨", "아서 모건"],
+        "answer": 3
+    },
+    {
+        "text": "바이오하자드(레지던트 이블) 시리즈에서, 치명적인 좀비 바이러스를 퍼뜨린 거대 제약 회사의 이름은?",
+        "choices": ["앱스테르고", "엄브렐라", "트라이셀", "웨이랜드 유타니"],
+        "answer": 1
+    },
+    {
+        "text": "폴암을 든 수많은 젖소들이 이족보행으로 덤벼오는, 디아블로 2의 유서 깊은 파밍 장소는?",
+        "choices": ["포니방", "도깨비방", "카우방", "보물고블린 방"],
+        "answer": 2
+    },
+    {
+        "text": "동물의 숲 시리즈에서 매주 토요일 밤마다 광장에 나타나 감미로운 기타 연주와 노래를 들려주는 뮤지션의 이름은?",
+        "choices": ["T.K.", "여울", "도루묵씨", "마스터"],
+        "answer": 0
+    },
+    {
+        "text": "스타듀 밸리에서, 평화로운 펠리컨 마을을 호시탐탐 노리는 대형 마트의 이름은?",
+        "choices": ["피에르네 잡화점", "펠리컨 마트", "조자마트", "스타듀 마트"],
+        "answer": 2
+    },
+    {
+        "text": "젤다의 전설: 왕국의 눈물에서 기상천외한 무기 제작을 가능하게 하는 능력은?",
+        "choices": ["울트라핸드", "스크래빌드", "트레루프", "리버레코"],
+        "answer": 1
+    },
+    {
+        "text": "리그 오브 레전드에서 보이지 않는 버섯을 심어 상대를 분노하게 만드는 챔피언 '티모'의 출신지는?",
+        "choices": ["밴들 시티", "데마시아", "녹서스", "아이오니아"],
+        "answer": 0
+    },
+    {
+        "text": "밟으면 납작해지는, '슈퍼 마리오' 시리즈의 가장 흔한 적 '굼바'의 모티브가 된 버섯은?",
+        "choices": ["양송이버섯", "독버섯", "표고버섯", "송이버섯"],
+        "answer": 2
+    },
+    {
+        "text": "다크 소울 시리즈를 비롯한 프롬 소프트웨어 게임들에서 사망 시 공통적으로 보이는 문구는?",
+        "choices": ["GAME OVER", "YOU DIED", "WASTED", "MISSION FAILED"],
+        "answer": 1
+    },
+    {
+        "text": "어몽어스에서 선량한 크루원인 척 연기하며 몰래 암살을 저지르고 다니는 배신자의 공식 명칭은?",
+        "choices": ["임포스터", "마피아", "스파이", "어쌔신"],
+        "answer": 0
+    },
+    {
+        "text": "메이플스토리 초창기 초보 유저들이 마주치면 식은땀을 흘리게 만들었던 빨간색 리본을 맨 몬스터는?",
+        "choices": ["주황버섯", "리본돼지", "슬라임", "뿔버섯"],
+        "answer": 1
+    },
+    {
+        "text": "스트리트 파이터 시리즈에서 류와 켄이 사용하는 기술로, '↓↘→ + P' 를 입력하면 나가는 유명한 기술의 이름은?",
+        "choices": ["파동권", "승룡권", "용권선풍각", "춘리킥"],
+        "answer": 0
+    },
+    {
+        "text": "전 세계에서 가장 많이 팔린 퍼즐 게임 '테트리스'에서, 위에서 떨어지는 조각들을 지칭하는 공식 용어는?",
+        "choices": ["레고", "블록", "테트로미노", "폴리미노"],
+        "answer": 2
+    },
+        {
+        "text": "샌드박스 게임 '마인크래프트'를 처음 개발한 인물은?",
+        "choices": ["시드 마이어", "마르쿠스 페르손", "존 카맥", "토드 하워드"],
+        "answer": 1
+    },
+    {
+        "text": "'오버워치'의 대표 캐릭터 중 하나인 트레이서의 본명은?",
+        "choices": ["레나 옥스턴", "아멜리 라크루아", "앙겔라 치글러", "송하나"],
+        "answer": 0
+    },
+    {
+        "text": "'메이플스토리'의 서비스 초기 최고 레벨(만렙)은?",
+        "choices": ["99", "150", "200", "250"],
+        "answer": 2
+    },
+    {
+        "text": "'사이버펑크 2077'과 '위쳐' 시리즈를 개발한 폴란드의 게임 개발사는?",
+        "choices": ["유비소프트", "너티 독", "베데스다", "CDPR"],
+        "answer": 3
+    },
+    {
+        "text": "퍼즐 게임의 대명사 '테트리스'를 처음 개발한 알렉세이 파지트노프의 국적은? (당시 기준)",
+        "choices": ["미국", "일본", "소련(러시아)", "영국"],
+        "answer": 2
+    },
+    {
+        "text": "'월드 오브 워크래프트'의 세계관에서 치열하게 대립하는 두 주요 진영은?",
+        "choices": ["얼라이언스와 호드", "테란과 프로토스", "빛과 어둠", "레지스탕스와 제국군"],
+        "answer": 0
+    },
+    {
+        "text": "엔씨소프트의 MMORPG, '리니지'가 최초로 정식 출시된 연도는?",
+        "choices": ["1996년", "1998년", "2001년", "2003년"],
+        "answer": 1
+    },
+        {
+        "text": "'다크 소울(Dark Souls)' 시리즈에서 플레이어가 주로 휴식을 취하고 레벨업을 하는 장소는?",
+        "choices": ["화톳불", "우물", "여관", "신전"],
+        "answer": 0
+    },
+    {
+        "text": "밸브 코퍼레이션의 명작 FPS '하프라이프' 시리즈의 주인공인 고든 프리맨의 본래 직업은?",
+        "choices": ["특수부대원", "경찰", "이론 물리학자", "외과의사"],
+        "answer": 2
+    },
+    {
+        "text": "'포탈' 시리즈에서 플레이어를 끊임없이 시험하고 괴롭히는 인공지능의 이름은?",
+        "choices": ["GLaDOS", "SHODAN", "Cortana", "HAL 9000"],
+        "answer": 0
+    },
+    {
+        "text": "'할로우 나이트'의 배경이 되는, 몰락한 곤충들의 왕국 이름은?",
+        "choices": ["신성둥지", "꿈의 세계", "깊은둥지", "로우랜즈"],
+        "answer": 0
+    },
+    {
+        "text": "'어몽어스'에서 선량한 시민 역할을 뜻하는 용어는?",
+        "choices": ["임포스터", "크루원", "마피아", "경찰"],
+        "answer": 1
+    },
+    {
+        "text": "1인 개발 농장 시뮬레이션 게임, '스타듀 밸리'를 개발한 인물의 이름은?",
+        "choices": ["토비 폭스", "에릭 바론", "션 머레이", "조나단 블로우"],
+        "answer": 1
+    },
+    {
+        "text": "액션 게임 '갓 오브 워' 시리즈의 주인공 '크레토스'가 북유럽 신화 배경에서 주로 사용하는 도끼의 이름은?",
+        "choices": ["묠니르", "궁니르", "리바이어던 도끼", "혼돈의 도끼"],
+        "answer": 2
+    },
+    {
+        "text": "너티 독의 '라스트 오브 어스'에서 인류를 파멸로 몰고 간 좀비화의 원인이 되는 감염균은?",
+        "choices": ["T-바이러스", "동충하초 균", "플라가", "네크로모프"],
+        "answer": 1
+    },
+    {
+        "text": "아틀러스의 JRPG '페르소나 3'에서 주인공이 소속된 조직의 이름은?",
+        "choices": ["마음의 괴도단", "S.E.E.S.(특별과외활동부)", "방과후 과외활동부", "자칭 특별수사대"],
+        "answer": 1
+    },
+    {
+        "text": "아틀러스의 JRPG '페르소나 4'에서 '도지마 나나코'의 커뮤니티는?",
+        "choices": ["정의", "전차", "연인", "태양"],
+        "answer": 0
+    },
+    {
+        "text": "'파이널 판타지 VII'의 주인공 '클라우드 스트라이프'가 사용하는 거대한 검의 이름은?",
+        "choices": ["마스터 소드", "버스터 소드", "건블레이드", "엑스칼리버"],
+        "answer": 1
+    },
+    {
+        "text": "'에이펙스 레전드'의 배경 세계관이 되는 게임은?",
+        "choices": ["콜 오브 듀티", "배틀필드", "타이탄폴", "데스티니"],
+        "answer": 2
+    },
+    {
+        "text": "오픈월드 액션 RPG '원신'에서 여행자가 처음으로 모험을 시작하는 지역은?",
+        "choices": ["리월", "이나즈마", "수메르", "몬드"],
+        "answer": 3
+    },
+    {
+        "text": "대전 격투 게임 '철권' 시리즈에서 끝없는 분쟁과 싸움의 중심이 되는 가문의 성씨는?",
+        "choices": ["카스가노", "미시마", "쿠사나기", "야가미"],
+        "answer": 1
+    },
+    {
+        "text": "헌팅 액션 게임 '몬스터 헌터' 시리즈에서 헌터들의 사냥을 돕는, 두 발로 걷는 고양이 수인종의 이름은?",
+        "choices": ["모그리", "아이루", "초코보", "팔루"],
+        "answer": 1
+    },
+    {
+        "text": "'디아블로' 시리즈에서 메인 악역인 '디아블로'가 상징하는 대악마의 이명은?",
+        "choices": ["공포의 군주", "증오의 군주", "파괴의 군주", "죄악의 군주"],
+        "answer": 0
+    },
+    {
+        "text": "유비소프트의 액션 어드벤처 '어쌔신 크리드' 시리즈에서 세계를 통제하려는 비밀 결사의 이름은?",
+        "choices": ["일루미나티", "템플 기사단(성전사단)", "프리메이슨", "데스 이터"],
+        "answer": 1
+    },
+    {
+        "text": "젤리빈 같은 캐릭터들이 각종 장애물을 넘으며 최후의 1인이 남을 때까지 경쟁하는 배틀로얄 게임의 이름은?",
+        "choices": ["갱 비스트", "폴가이즈", "휴먼 폴 플랫", "파티 애니멀즈"],
+        "answer": 1
+    },
+        {
+        "text": "팔콤의 액션 RPG '이스' 시리즈에서 대대로 주인공을 맡고 있는 캐릭터의 이름은?",
+        "choices": ["아돌 크리스틴", "도기", "피나", "체스터"],
+        "answer": 0
+    },
+    {
+        "text": "팔콤의 액션 RPG '이스' 시리즈의 영원한 주인공, '아돌 크리스틴'의 머리 색깔은?",
+        "choices": ["금색", "검은색", "붉은색", "푸른색"],
+        "answer": 2
+    },
+    {
+        "text": "반다이 남코의 대표 RPG  '테일즈 오브' 시리즈 중 가장 처음으로 발매된 작품의 이름은?",
+        "choices": ["테일즈 오브 데스티니", "테일즈 오브 판타지아", "테일즈 오브 심포니아", "테일즈 오브 어비스"],
+        "answer": 1
+    },
+    {
+        "text": "일본 국민 RPG '드래곤 퀘스트' 시리즈를 대표하는 물방울 모양의 귀여운 마스코트 몬스터 이름은?",
+        "choices": ["초코보", "모그리", "슬라임", "토드"],
+        "answer": 2
+    },
+    {
+        "text": "스퀘어 에닉스의 액션 RPG '니어: 오토마타'에서 플레이어가 조종하는 안드로이드 주인공의 이름은?",
+        "choices": ["9S", "2B", "A2", "Devola"],
+        "answer": 1
+    },
+    {
+        "text": "거스트의 '아틀리에' 시리즈에서 연금술사 주인공들이 재료를 모아 아이템을 조합할 때 반드시 사용하는 도구는?",
+        "choices": ["현자의 돌", "마법 지팡이", "가마솥", "연성진"],
+        "answer": 2
+    },
+    {
+        "text": "닌텐도의 SRPG '파이어 엠블렘' 시리즈에서 전투 중 캐릭터가 사망하면 다시는 부활하지 않는 모드는?",
+        "choices": ["하드코어 모드", "데스 모드", "클래식 모드", "루나틱 모드"],
+        "answer": 2
+    },
+    {
+        "text": "추리 어드벤처 '단간론파' 시리즈에서 절망적인 살인 게임을 주도하는 흑백 반반의 곰 이름은?",
+        "choices": ["쿠마몬", "모노쿠마", "우사미", "시로쿠마"],
+        "answer": 1
+    },
+    {
+        "text": "잠입 액션 '메탈기어 솔리드' 시리즈를 탄생시킨 일본의 유명 게임 디렉터는?",
+        "choices": ["미야자키 히데타카", "코지마 히데오", "미카미 신지", "노무라 테츠야"],
+        "answer": 1
+    },
+    {
+        "text": "다양한 유명 로봇 애니메이션에 등장하는 로봇들로 턴제 전투를 벌이는 크로스오버 SRPG 시리즈의 이름은?",
+        "choices": ["SD건담 지 제네레이션", "프론트 미션", "슈퍼로봇대전", "아머드 코어"],
+        "answer": 2
+    },
+    {
+        "text": "'이스' 시리즈와 '영웅전설' 시리즈를 모두 개발한 일본의 게임 회사는?",
+        "choices": ["스퀘어 에닉스", "아틀러스", "코에이 테크모", "니혼 팔콤"],
+        "answer": 3
+    },
+    {
+        "text": "팔콤의 RPG '궤적' 시리즈의 주 무대가 되는 대륙의 이름은?",
+        "choices": ["제무리아 대륙", "에레보니아 대륙", "가르가리아 대륙", "에레보스 대륙"],
+        "answer": 0
+    },
+    {
+        "text": "아틀러스의 RPG '페르소나 4'에서 주인공 일행이 살인 사건의 진상을 파헤치며 활동하는 시골 마을의 이름은?",
+        "choices": ["이나바", "츠카사", "야소가미", "스미레"],
+        "answer": 0
+    },
+    {
+        "text": "'아이돌마스터' 시리즈에서 아마미 하루카, 키사라기 치하야 등의 아이돌들이 소속된 프로덕션의 이름은?",
+        "choices": ["346 프로덕션", "283 프로덕션", "765 프로덕션", "315 프로덕션"],
+        "answer": 2
+    },
+    {
+        "text": "일본의 국민 RPG '드래곤 퀘스트' 시리즈의 마스코트 몬스터인 슬라임을 디자인한 유명 만화가는?",
+        "choices": ["오다 에이치로", "토리야마 아키라", "키시모토 마사시", "이노우에 다케히코"],
+        "answer": 1
+    },
+    {
+        "text": "닌텐도의 RPG '제노블레이드 크로니클스' 1편에서 주인공 슈르크 일행이 살아가는 거대한 신의 유해 이름은?",
+        "choices": ["기신", "거신", "해신", "천신"],
+        "answer": 1
+    },
+    {
+        "text": "닌텐도의 SRPG '파이어 엠블렘' 시리즈 전통의 무기 상성 시스템에서 '검'이 우위를 가지는 무기는?",
+        "choices": ["창", "활", "마법", "도끼"],
+        "answer": 3
+    },
+    {
+        "text": "거스트의 RPG '아틀리에' 시리즈에서 게임 진행의 핵심이 되는 시스템이자 주인공들의 주된 직업은?",
+        "choices": ["대장장이", "연금술사", "정령사", "마법사"],
+        "answer": 1
+    },
+    {
+        "text": "'역전재판' 시리즈의 주인공 '나루호도 류이치'가 법정에서 외치지 않는 말은?",
+        "choices": ["잠깐!", "이의 있음!", "받아라!", "정숙하시오!"],
+        "answer": 3
+    },
+    {
+        "text": "'여신전생' 시리즈에 개근하며, 현재 아틀러스의 마스코트 캐릭터이기도 한 악마의 이름은?",
+        "choices": ["픽시", "잭 랜턴", "잭 프로스트", "모쿠이"],
+        "answer": 2
+    },
+    {
+        "text": "'영웅전설 섬의 궤적' 에서 주인공 린 슈바르처가 입학하는 학교의 이름은?",
+        "choices": ["제니스 왕립학원", "토르즈 사관학교", "아라미스 고등학교", "성 아스트라이아 여학교"],
+        "answer": 1
+    },
+    {
+        "text": "'페르소나 5'에서 타인의 왜곡된 마음 속에 침입하여 보물을 훔치는 주인공 일행의 조직 이름은?",
+        "choices": ["마음의 괴도단", "새벽의 괴도단", "진실의 괴도단", "별의 괴도단"],
+        "answer": 0
+    },
+    {
+        "text": "스퀘어 에닉스의 '파이널 판타지' 시리즈에서 탈것으로 자주 등장하는 노란색 새 몬스터의 이름은?",
+        "choices": ["모그리", "사보텐더", "초코보", "톤베리"],
+        "answer": 2
+    },
+    {
+        "text": "'이스 VIII: 라크리모사 오브 다나'에서 주인공 아돌이 표류하게 되는 저주받은 무인도의 이름은?",
+        "choices": ["에스테리아", "셀세타", "세이렌 섬", "알타고"],
+        "answer": 2
+    },
+    {
+        "text": "'페르소나 3'에서 주인공 일행이 자신의 페르소나를 소환할 때 사용하는 소환기의 모양은?",
+        "choices": ["권총", "검", "활", "마법봉"],
+        "answer": 0
+    },
+    {
+        "text": "세가의 '용과 같이' 시리즈의 초대 주인공 '키류 카즈마'의 별명은?",
+        "choices": ["도지마의 용", "카무로쵸의 사자", "동경의 검은 용", "오사카의 호랑이"],
+        "answer": 0
+    },
+    {
+        "text": "캡콤의 '몬스터 헌터' 시리즈에서 '육지의 여왕'이라는 이명을 가진 비룡종 몬스터의 이름은?",
+        "choices": ["리오레우스", "리오레이아", "테오 테스카토르", "나르가쿠르가"],
+        "answer": 1
+    },
+    {
+        "text": "캡콤의 '몬스터 헌터' 시리즈 첫 번째 작품부터 한 번도 빠짐없이 등장한 몬스터는?",
+        "choices": ["티가렉스", "리오레우스", "나르가쿠르가", "진오우거"],
+        "answer": 1
+    },
+    {
+        "text": "2D 샌드박스 게임 '테라리아'의 최종 보스 이름은?",
+        "choices": ["크툴루의 눈", "플랜테라", "월 오브 플레시", "문 로드"],
+        "answer": 3
+    },
+    {
+        "text": "닌텐도의 대난투 스매시브라더스 시리즈를 탄생시킨 디렉터의 이름은?",
+        "choices": ["사쿠라이 마사히로", "미야모토 시게루", "아오누마 에이지", "코지마 히데오"],
+        "answer": 0
+    },
+    {
+        "text": "세가의 마스코트 캐릭터 '소닉'의 몸 색깔은?",
+        "choices": ["빨간색", "노란색", "초록색", "파란색"],
+        "answer": 3
+    },
+    {
+        "text": "밸브 코퍼레이션의 명작 FPS '하프라이프' 시리즈의 주인공 이름은?",
+        "choices": ["알릭스 밴스", "고든 프리맨", "지맨", "바니 칼훈"],
+        "answer": 1
+    },
+    {
+        "text": "퍼즐 게임 '포탈'에서 글라도스(GLaDOS)가 실험의 보상으로 주겠다고 반복해서 언급하는 음식은?",
+        "choices": ["쿠키", "푸딩", "파이", "케이크"],
+        "answer": 3
+    },
+    {
+        "text": "고전 아케이드 게임 '팩맨'에서 팩맨이 스테이지에 있는 쿠키를 다 먹지 못하게 방해하는 적들의 정체는?",
+        "choices": ["외계인", "유령", "거미", "로봇"],
+        "answer": 1
+    },
+    {
+        "text": "'모탈 컴뱃' 시리즈의 상징으로, 상대방의 체력을 모두 소진시킨 후 잔혹하게 마무리하는 시스템의 이름은?",
+        "choices": ["브루탈리티(Brutality)", "페이탈리티(Fatality)", "하라키리(Hara-Kiri)", "애니멀리티(Animality)"],
+        "answer": 1
+    },
+    {
+        "text": "닌텐도의 '스플래툰' 시리즈에서 플레이어블 캐릭터는 어떤 해산물을 모티브로 했는가?",
+        "choices": ["문어", "새우", "오징어", "게"],
+        "answer": 2
+    },
+    {
+        "text": "'엘더스크롤 5: 스카이림'에서 주인공이 사용하는 가장 대표적인 용언인 'FUS RO DAH'의 뜻은?",
+        "choices": ["거침없는 힘", "화염 숨결", "선풍의 질주", "시간 둔화"],
+        "answer": 0
+    },
+    {
+        "text": "'폴아웃' 시리즈를 대표하는 금발의 마스코트 캐릭터 이름은?",
+        "choices": ["핍보이", "볼트 테크", "구울", "볼트 보이"],
+        "answer": 3
+    },
+    {
+        "text": "'둠' 시리즈에서 플레이어가 얻을 수 있는 가장 강력한 무기인 BFG9000의 'BFG'는 무엇의 약자인가?",
+        "choices": ["Big Fire Gun", "Big Fucking Gun", "Blast Force Gun", "Bio Force Gun"],
+        "answer": 1
+    },
+    {
+        "text": "FPS '헤일로' 시리즈의 주인공 이름은?",
+        "choices": ["둠슬레이어", "마커스 피닉스", "마스터 치프", "고든 프리맨"],
+        "answer": 2
+    },
+    {
+        "text": "유비소프트의 '어쌔신 크리드' 시리즈에서 암살자들이 손목에 장착하고 다니는 무기의 이름은?",
+        "choices": ["팬텀 블레이드", "히든 블레이드", "후크 블레이드", "듀얼 블레이드"],
+        "answer": 1
+    },
+    {
+        "text": "'GTA5'는 총 몇 명의 주인공을 번갈아 가며 플레이할 수 있는가?",
+        "choices": ["1명", "2명", "3명", "4명"],
+        "answer": 2
+    },
+    {
+        "text": "'다크 소울' 시리즈에서 유저들에게 널리 알려진 밈이자 동료 NPC인 솔라의 상징적인 대사는?",
+        "choices": ["달빛 만세!", "태양 만세!", "별빛 만세!", "어둠 만세!"],
+        "answer": 1
+    },
+    {
+        "text": "프롬 소프트웨어의 액션 RPG '블러드본'의 주요 무대가 되는 빅토리아풍 고딕 도시의 이름은?",
+        "choices": ["로스릭", "드랭글레이어", "로드란", "야남"],
+        "answer": 3
+    },
+    {
+        "text": "'엘든 링'에서 축복의 인도를 받아 틈새의 땅으로 돌아온 주인공 플레이어를 지칭하는 단어는?",
+        "choices": ["재의 귀인", "사냥꾼", "빛바랜 자", "저주받은 자"],
+        "answer": 2
+    },
+    {
+        "text": "'세키로: 섀도우 다이 트와이스'의 주인공인 늑대의 잃어버린 왼쪽 팔을 대체하는 장치의 이름은?",
+        "choices": ["오토메일", "사이보그 암", "기계팔", "닌자 의수"],
+        "answer": 3
+    },
+    {
+        "text": "덱 빌딩 로그라이크 '슬레이 더 스파이어'에서 가장 먼저 플레이할 수 있는 기본 캐릭터의 직업은?",
+        "choices": ["사일런트(Silent)", "디펙트(Defect)", "와쳐(Watcher)", "아이언클래드(Ironclad)"],
+        "answer": 3
+    },
+    {
+        "text": "전술 슈팅 게임 '발로란트'의 요원 중, 한국 출신으로 바람을 다루는 캐릭터의 이름은?",
+        "choices": ["피닉스", "제트", "세이지", "레이나"],
+        "answer": 1
+    },
+    {
+        "text": "전술 슈팅 '레인보우 식스 시즈'에서 DP-27 거치형 기관총을 주무기로 사용하여 유저들 사이에서 '군주님'이라 불리는 오퍼레이터는?",
+        "choices": ["캅칸", "퓨즈", "타찬카", "글라즈"],
+        "answer": 2
+    },
+    {
+        "text": "'데이브 더 다이버'에서 주인공 데이브가 낮에 바다에서 물고기를 잡고 밤에 운영하는 가게의 종류는?",
+        "choices": ["라멘집", "카페", "초밥집", "스테이크하우스"],
+        "answer": 2
+    },
+    {
+        "text": "'P의 거짓'은 어떤 유명한 고전 동화를 재해석한 게임인가?",
+        "choices": ["백설공주", "피노키오", "빨간 모자", "헨젤과 그레텔"],
+        "answer": 1
+    },
+    {
+        "text": "'승리의 여신: 니케'에서 부대 '카운터스'의 리더를 맡고 있는 니케의 이름은?",
+        "choices": ["아니스", "네온", "마리안", "라피"],
+        "answer": 3
+    },
+    {
+        "text": "'우마무스메 프리티 더비'에 등장하는, 홋카이도에서 상경하여 후일 일본 총대장이라 불리는 우마무스메의 이름은?",
+        "choices": ["스페셜 위크", "사일런스 스즈카", "토카이 테이오", "골드 쉽"],
+        "answer": 0
+    },  
+    {
+        "text": "사이게임즈의 모바일 육성 게임 '우마무스메 프리티 더비'의 한국 서버 출시 년도는?",
+        "choices": ["2020", "2021", "2022", "2023"],
+        "answer": 2
+    },    
+    {
+        "text": "'붕괴: 스타레일'의 앱 아이콘이자, 유저들에게 '삼칠이'로 불리는 캐릭터의 풀 네임은? ",
+        "choices": ["Mar. 7th", "서티 세븐", "Mar. 17th", "37th Children"],
+        "answer": 0
+    }
+];
+
+// BGM은 게임 시작 시 첫 문제와 함께 재생
+updateBgmButtonIcon();
+</script>
+</body>
+</html>
+
+
