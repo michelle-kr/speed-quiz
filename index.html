@@ -119,10 +119,10 @@ button { -webkit-tap-highlight-color: transparent; }
     filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.35));
     will-change: transform, opacity;
 }
-.fever-chara.left-1 { left: 6px; --amp: 26px; --dur: 2.02s; --delay: 0.02s; }
-.fever-chara.left-2 { left: 56px; --amp: 20px; --dur: 1.85s; --delay: 0.12s; }
-.fever-chara.right-1 { right: 56px; --amp: 22px; --dur: 1.94s; --delay: 0.06s; }
-.fever-chara.right-2 { right: 6px; --amp: 28px; --dur: 2.11s; --delay: 0.16s; }
+.fever-chara.left-1 { left: 6px; --amp: 26px; --dur: 3s; --delay: 0.02s; }
+.fever-chara.left-2 { left: 56px; --amp: 20px; --dur: 2.6s; --delay: 0.12s; }
+.fever-chara.right-1 { right: 56px; --amp: 22px; --dur: 3s; --delay: 0.06s; }
+.fever-chara.right-2 { right: 6px; --amp: 28px; --dur: 2.6s; --delay: 0.16s; }
 #quizScreen.fever-mode .fever-chara {
     animation:
         feverCharaPop 0.52s cubic-bezier(0.2, 0.9, 0.25, 1.25) both,
@@ -161,44 +161,65 @@ button { -webkit-tap-highlight-color: transparent; }
     }
 }
 @keyframes feverCharaHopSpin {
+    /* ── Jump 1 ── */
     0% {
         transform: translate3d(0, 0, 0) rotateY(0deg) scale(1);
     }
-    8% {
-        transform: translate3d(0, calc(var(--amp, 24px) * -0.95), 0) rotateY(0deg) scale(1.04);
+    5% {
+        transform: translate3d(0, calc(var(--amp, 24px) * -1), 0) rotateY(0deg) scale(1.03);
     }
-    16% {
+    11% {
         transform: translate3d(0, 0, 0) rotateY(0deg) scale(1);
     }
-    24% {
+    /* ── Jump 2 ── */
+    14% {
+        transform: translate3d(0, 0, 0) rotateY(0deg) scale(1);
+    }
+    19% {
         transform: translate3d(0, calc(var(--amp, 24px) * -0.9), 0) rotateY(0deg) scale(1.03);
     }
-    32% {
+    25% {
         transform: translate3d(0, 0, 0) rotateY(0deg) scale(1);
     }
-    45% {
-        transform: translate3d(0, calc(var(--amp, 24px) * -1), 0) rotateY(240deg) scale(1.05);
+    /* ── Jump 3 + Spin 360 ── */
+    28% {
+        transform: translate3d(0, 0, 0) rotateY(0deg) scale(1);
     }
-    50% {
-        transform: translate3d(0, calc(var(--amp, 24px) * -0.55), 0) rotateY(500deg) scale(1.02);
+    36% {
+        transform: translate3d(0, calc(var(--amp, 24px) * -1), 0) rotateY(180deg) scale(1.04);
     }
-    56% {
+    44% {
+        transform: translate3d(0, 0, 0) rotateY(360deg) scale(1);
+    }
+    /* ── Jump 4 ── */
+    48% {
+        transform: translate3d(0, 0, 0) rotateY(360deg) scale(1);
+    }
+    53% {
+        transform: translate3d(0, calc(var(--amp, 24px) * -0.92), 0) rotateY(360deg) scale(1.03);
+    }
+    60% {
+        transform: translate3d(0, 0, 0) rotateY(360deg) scale(1);
+    }
+    /* ── Jump 5 + Spin 360 ── */
+    64% {
+        transform: translate3d(0, 0, 0) rotateY(360deg) scale(1);
+    }
+    72% {
+        transform: translate3d(0, calc(var(--amp, 24px) * -1), 0) rotateY(540deg) scale(1.04);
+    }
+    80% {
         transform: translate3d(0, 0, 0) rotateY(720deg) scale(1);
     }
-    68% {
-        transform: translate3d(0, calc(var(--amp, 24px) * -0.92), 0) rotateY(720deg) scale(1.03);
-    }
-    76% {
+    /* ── Jump 6 ── */
+    84% {
         transform: translate3d(0, 0, 0) rotateY(720deg) scale(1);
     }
-    88% {
-        transform: translate3d(0, calc(var(--amp, 24px) * -1), 0) rotateY(960deg) scale(1.05);
-    }
-    94% {
-        transform: translate3d(0, calc(var(--amp, 24px) * -0.52), 0) rotateY(1220deg) scale(1.02);
+    91% {
+        transform: translate3d(0, calc(var(--amp, 24px) * -0.95), 0) rotateY(720deg) scale(1.03);
     }
     100% {
-        transform: translate3d(0, 0, 0) rotateY(1440deg) scale(1);
+        transform: translate3d(0, calc(var(--amp, 24px) * -0.04), 0) rotateY(720deg) scale(1);
     }
 }
 
@@ -566,11 +587,28 @@ button { -webkit-tap-highlight-color: transparent; }
     background: rgba(255,255,255,0.02);
     border-top: 1px solid rgba(255,255,255,0.08);
     display: flex;
+    flex-direction: column;
+    gap: 12px;
     align-items: center;
     justify-content: center;
     color: rgba(255,255,255,0.15);
     font-size: 13px;
     flex-shrink: 0;
+}
+.btn-fever-test {
+    border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.08);
+    color: #e8edf6;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.btn-fever-test.on {
+    border-color: rgba(255, 180, 76, 0.7);
+    background: rgba(255, 180, 76, 0.2);
+    color: #ffe7b5;
 }
 .fever-top-stage {
     width: 100%;
@@ -853,7 +891,10 @@ button { -webkit-tap-highlight-color: transparent; }
                 </div>
             </div>
         </div>
-        <div class="movie-placeholder">광고 영역 (360×202)</div>
+        <div class="movie-placeholder">
+            <div>광고 영역 (360×202)</div>
+            <button type="button" id="btnFeverTest" class="btn-fever-test">피버 테스트: OFF</button>
+        </div>
     </div>
 
     <!-- ── 결과 화면 ── -->
@@ -940,7 +981,9 @@ var timerRAF        = null;
 var isAnswering     = false;
 var gameOver        = false;
 var audioCtx        = null;
-var bgmAudio        = new Audio("bgm.mp3");
+var BGM_TRACKS      = ["bgm.mp3", "bgm2.mp3", "bgm3.mp3"];
+var bgmAudio        = new Audio();
+var currentBgmTrack = "";
 var finalAudio      = new Audio("final.mp3");
 var isBgmEnabled    = true;
 var BGM_BASE_VOLUME = 0.15;
@@ -948,13 +991,36 @@ var bgmFadeTimer    = null;
 var finalFadeInTimer  = null;
 var finalFadeOutTimer = null;
 var finalFadeOutArmed = false;
+var feverForceEnabled = false;
+var feverPauseLastTick = 0;
 
 bgmAudio.loop = true;
 bgmAudio.preload = "auto";
 bgmAudio.volume = BGM_BASE_VOLUME;
+bgmAudio.src = BGM_TRACKS[0];
+currentBgmTrack = BGM_TRACKS[0];
 finalAudio.loop = false;
 finalAudio.preload = "auto";
 finalAudio.volume = 0;
+
+function selectRandomBgmTrack() {
+    if (!BGM_TRACKS.length) return;
+    var next = BGM_TRACKS[Math.floor(Math.random() * BGM_TRACKS.length)];
+
+    // 연속 재시작 시 같은 곡만 반복되는 체감을 줄임
+    if (BGM_TRACKS.length > 1 && next === currentBgmTrack) {
+        var idx = BGM_TRACKS.indexOf(next);
+        next = BGM_TRACKS[(idx + 1 + Math.floor(Math.random() * (BGM_TRACKS.length - 1))) % BGM_TRACKS.length];
+    }
+
+    if (next === currentBgmTrack) return;
+
+    bgmAudio.pause();
+    bgmAudio.currentTime = 0;
+    bgmAudio.src = next;
+    bgmAudio.load();
+    currentBgmTrack = next;
+}
 
 function clearFinalFadeTimers() {
     if (finalFadeInTimer) {
@@ -1230,10 +1296,16 @@ function showCombo(streak) {
 }
 
 function setFeverMode(enabled) {
-    var isOn = !!enabled && $quizScreen.classList.contains("active") && !gameOver;
+    var isOn = (!!enabled || feverForceEnabled) && $quizScreen.classList.contains("active") && !gameOver;
     var quizArea = $quizScreen.querySelector(".quiz-area");
     if (quizArea) quizArea.classList.toggle("fever-mode", isOn);
     $quizScreen.classList.toggle("fever-mode", isOn);
+}
+
+function updateFeverTestButton() {
+    if (!$btnFeverTest) return;
+    $btnFeverTest.textContent = "피버 테스트: " + (feverForceEnabled ? "ON" : "OFF");
+    $btnFeverTest.classList.toggle("on", feverForceEnabled);
 }
 
 function emitComboSparkles(isGold) {
@@ -1300,6 +1372,7 @@ var $leaveConfirm    = document.getElementById("leaveConfirm");
 var $movieModal         = document.getElementById("movieModal");
 var $movieCountdownText = document.getElementById("movieCountdownText");
 var $movieCloseBtn      = document.getElementById("movieCloseBtn");
+var $btnFeverTest    = document.getElementById("btnFeverTest");
 var $container       = document.querySelector(".game-container");
 var $quizScreen      = document.getElementById("quizScreen");
 var $resultScreenEl  = document.getElementById("resultScreen");
@@ -1478,6 +1551,7 @@ function showScreen(id) {
 function startGame() {
 
     stopFinalTheme(false);
+    selectRandomBgmTrack();
     startBgm();
 
     selectedCategory = document.getElementById("categorySelect").value;
@@ -1638,6 +1712,15 @@ function selectAnswer(selected) {
  * ============================================================ */
 function tickTimer() {
     if (gameOver) return;
+
+    if (feverForceEnabled && $quizScreen.classList.contains("active")) {
+        var freezeNow = Date.now();
+        if (!feverPauseLastTick) feverPauseLastTick = freezeNow;
+        endTime += (freezeNow - feverPauseLastTick);
+        feverPauseLastTick = freezeNow;
+    } else {
+        feverPauseLastTick = 0;
+    }
 
     var remaining = Math.max(0, endTime - Date.now());
     var seconds   = remaining / 1000;
@@ -1904,6 +1987,17 @@ $movieCloseBtn.addEventListener("click", function () {
     closeAdModal();
     showScreen("startScreen");
 });
+
+if ($btnFeverTest) {
+    $btnFeverTest.addEventListener("click", function () {
+        feverForceEnabled = !feverForceEnabled;
+        feverPauseLastTick = 0;
+        updateFeverTestButton();
+        setFeverMode(comboStreak >= 15);
+    });
+}
+
+updateFeverTestButton();
 
 $leaveCancel.addEventListener("click", closeLeaveModal);
 $leaveConfirm.addEventListener("click", function () {
@@ -2225,7 +2319,7 @@ var QUESTIONS = [
         "category": "trivia"
     },
     {
-        "text": "사람의 치아 중에서 가장 늦게, 보통 사춘기 이후에 나는 치아의 이름은",
+        "text": "사람의 치아 중에서 가장 늦게, 보통 사춘기 이후에 나는 치아의 이름은?",
         "choices": ["송곳니", "앞니", "사랑니", "젖니"],
         "answer": 2,
         "category": "trivia"
@@ -2423,7 +2517,7 @@ var QUESTIONS = [
         "category": "trivia"
     },
     {
-        "text": "'젤다의 전설' 시리즈에서 맨날 구르면서 항아리를 깨고 다니는 '초록색 옷 입은 애'의 이름은?",
+        "text": "'젤다의 전설' 시리즈의 주인공인 '초록색 옷 입은 캐릭터'의 이름은?",   
         "choices": ["젤다", "링크", "루이지", "피터팬"],
         "answer": 1,
         "category": "totalgame"
@@ -2441,7 +2535,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "'배틀그라운드'에서 수많은 유저들을 설레게 하는, 최후의 1인이 되었을 때 화면에 뜨는 문구는?",
+        "text": "'배틀그라운드'에서 최후의 1인이 되었을 때 화면에 뜨는 문구는?",
         "choices": ["이겼닭! 오늘 저녁은 치킨이닭!", "승리! 오늘 저녁은 삼겹살이다!", "챔피언! 오늘 저녁은 피자다!", "생존! 오늘 저녁은 국밥이다!"],
         "answer": 0,
         "category": "totalgame"
@@ -2459,7 +2553,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "귀여운 젤리빈들이 뛰어다니는 게임 '폴 가이즈(Fall Guys)' 캐릭터들의 공식적인 설정상 키는?",
+        "text": "귀여운 젤리빈들이 뛰어다니는 게임 '폴 가이즈' 캐릭터들의 공식적인 설정상 키는?",
         "choices": ["약 50cm", "약 1m", "약 1.8m", "약 2.5m"],
         "answer": 2,
         "category": "totalgame"
@@ -2675,7 +2769,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "바이오하자드(레지던트 이블) 시리즈에서, 치명적인 좀비 바이러스를 퍼뜨린 거대 제약 회사의 이름은?",
+        "text": "바이오하자드 시리즈에서 치명적인 좀비 바이러스를 퍼뜨린 거대 제약 회사의 이름은?",
         "choices": ["앱스테르고", "엄브렐라", "트라이셀", "웨이랜드 유타니"],
         "answer": 1,
         "category": "totalgame"
@@ -2759,7 +2853,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "'메이플스토리'의 서비스 초기 최고 레벨(만렙)은?",
+        "text": "'메이플스토리'의 서비스 초기 최고 레벨은?",
         "choices": ["99", "150", "200", "250"],
         "answer": 2,
         "category": "totalgame"
@@ -2789,7 +2883,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
         {
-        "text": "'다크 소울(Dark Souls)' 시리즈에서 플레이어가 주로 휴식을 취하고 레벨업을 하는 장소는?",
+        "text": "'다크 소울' 시리즈에서 플레이어가 주로 휴식을 취하고 레벨업을 하는 장소는?",
         "choices": ["화톳불", "우물", "여관", "신전"],
         "answer": 0,
         "category": "totalgame"
@@ -2849,7 +2943,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "'파이널 판타지 VII'의 주인공 '클라우드 스트라이프'가 사용하는 거대한 검의 이름은?",
+        "text": "'파이널 판타지 VII'에서 '클라우드 스트라이프'가 사용하는 거대한 검의 이름은?",
         "choices": ["마스터 소드", "버스터 소드", "건블레이드", "엑스칼리버"],
         "answer": 1,
         "category": "totalgame"
@@ -2921,7 +3015,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "스퀘어 에닉스의 액션 RPG '니어: 오토마타'에서 플레이어가 조종하는 안드로이드 주인공의 이름은?",
+        "text": "'니어: 오토마타'에서 플레이어가 조종하는 안드로이드 주인공의 이름은?",
         "choices": ["9S", "2B", "A2", "Devola"],
         "answer": 1,
         "category": "totalgame"
@@ -2939,7 +3033,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "추리 어드벤처 '단간론파' 시리즈에서 절망적인 살인 게임을 주도하는 흑백 반반의 곰 이름은?",
+        "text": "추리 어드벤처 '단간론파' 시리즈에서 살인 게임을 주도하는 흑백 반반의 곰 이름은?",
         "choices": ["쿠마몬", "모노쿠마", "우사미", "시로쿠마"],
         "answer": 1,
         "category": "totalgame"
@@ -2981,7 +3075,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "일본의 국민 RPG '드래곤 퀘스트' 시리즈의 마스코트 몬스터인 슬라임을 디자인한 유명 만화가는?",
+        "text": "일본 국민 RPG '드래곤 퀘스트' 시리즈의 마스코트 몬스터 슬라임을 디자인한 유명 만화가는?",
         "choices": ["오다 에이치로", "토리야마 아키라", "키시모토 마사시", "이노우에 다케히코"],
         "answer": 1,
         "category": "totalgame"
@@ -3029,19 +3123,19 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "스퀘어 에닉스의 '파이널 판타지' 시리즈에서 탈것으로 자주 등장하는 노란색 새 몬스터의 이름은?",
+        "text": "'파이널 판타지' 시리즈에서 탈것으로 자주 등장하는 노란색 조류 몬스터의 이름은?",
         "choices": ["모그리", "사보텐더", "초코보", "톤베리"],
         "answer": 2,
         "category": "totalgame"
     },
     {
-        "text": "'이스 VIII: 라크리모사 오브 다나'에서 주인공 아돌이 표류하게 되는 저주받은 무인도의 이름은?",
+        "text": "'이스 VIII: 라크리모사 오브 다나'에서 주인공이 표류하게 되는 저주받은 무인도의 이름은?",
         "choices": ["에스테리아", "셀세타", "세이렌 섬", "알타고"],
         "answer": 2,
         "category": "totalgame"
     },
     {
-        "text": "'페르소나 3'에서 주인공 일행이 자신의 페르소나를 소환할 때 사용하는 소환기의 모양은?",
+        "text": "'페르소나 3'에서 주인공 일행이 페르소나를 소환할 때 사용하는 소환기의 모양은?",
         "choices": ["권총", "검", "활", "마법봉"],
         "answer": 0,
         "category": "totalgame"
@@ -3059,7 +3153,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "캡콤의 '몬스터 헌터' 시리즈 첫 번째 작품부터 한 번도 빠짐없이 등장한 몬스터는?",
+        "text": "캡콤의 '몬스터 헌터' 시리즈의 첫 번째 작품부터 한 번도 빠짐없이 등장한 몬스터는?",
         "choices": ["티가렉스", "리오레우스", "나르가쿠르가", "진오우거"],
         "answer": 1,
         "category": "totalgame"
@@ -3089,7 +3183,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "퍼즐 게임 '포탈'에서 글라도스(GLaDOS)가 실험의 보상으로 주겠다고 반복해서 언급하는 음식은?",
+        "text": "퍼즐 게임 '포탈'에서 글라도스가 실험의 보상으로 주겠다고 반복해서 언급하는 음식은?",
         "choices": ["쿠키", "푸딩", "파이", "케이크"],
         "answer": 3,
         "category": "totalgame"
@@ -3155,26 +3249,20 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "프롬 소프트웨어의 액션 RPG '블러드본'의 주요 무대가 되는 빅토리아풍 고딕 도시의 이름은?",
+        "text": "'블러드본'의 주요 무대가 되는 빅토리아풍 고딕 도시의 이름은?",
         "choices": ["로스릭", "드랭글레이어", "로드란", "야남"],
         "answer": 3,
         "category": "totalgame"
     },
     {
-        "text": "'엘든 링'에서 축복의 인도를 받아 틈새의 땅으로 돌아온 주인공 플레이어를 지칭하는 단어는?",
+        "text": "'엘든 링'에서 축복의 인도를 받아 틈새의 땅으로 돌아온 플레이어를 지칭하는 단어는?",
         "choices": ["재의 귀인", "사냥꾼", "빛바랜 자", "저주받은 자"],
         "answer": 2,
         "category": "totalgame"
     },
     {
-        "text": "'세키로: 섀도우 다이 트와이스'의 주인공인 늑대의 잃어버린 왼쪽 팔을 대체하는 장치의 이름은?",
+        "text": "'세키로: 섀도우 다이 트와이스'의 주인공의 잃어버린 왼쪽 팔을 대체하는 장치의 이름은?",
         "choices": ["오토메일", "사이보그 암", "기계팔", "닌자 의수"],
-        "answer": 3,
-        "category": "totalgame"
-    },
-    {
-        "text": "덱 빌딩 로그라이크 '슬레이 더 스파이어'에서 가장 먼저 플레이할 수 있는 기본 캐릭터의 직업은?",
-        "choices": ["사일런트(Silent)", "디펙트(Defect)", "와쳐(Watcher)", "아이언클래드(Ironclad)"],
         "answer": 3,
         "category": "totalgame"
     },
@@ -3185,7 +3273,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "'데이브 더 다이버'에서 주인공 데이브가 낮에 바다에서 물고기를 잡고 밤에 운영하는 가게의 종류는?",
+        "text": "'데이브 더 다이버'에서 주인공 데이브가 밤에 운영하는 가게는?",
         "choices": ["라멘집", "카페", "초밥집", "스테이크하우스"],
         "answer": 2,
         "category": "totalgame"
@@ -3203,7 +3291,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "'우마무스메 프리티 더비'에 등장하는, 일본 총대장이라 불리는 우마무스메의 이름은?",
+        "text": "'우마무스메 프리티 더비'에서 일본 총대장이라 불리는 우마무스메의 이름은?",
         "choices": ["스페셜 위크", "사일런스 스즈카", "토카이 테이오", "골드 쉽"],
         "answer": 0,
         "category": "totalgame"
@@ -3215,7 +3303,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },    
     {
-        "text": "'붕괴: 스타레일'의 앱 아이콘이자, 유저들에게 '삼칠이'로 불리는 캐릭터의 풀 네임은? ",
+        "text": "'붕괴: 스타레일'에서 유저들에게 '삼칠이'로 불리는 캐릭터의 풀 네임은? ",
         "choices": ["Mar. 7th", "서티 세븐", "Mar. 17th", "37th Children"],
         "answer": 0,
         "category": "totalgame"
@@ -3233,7 +3321,7 @@ var QUESTIONS = [
         "category": "genshin"
     },
     {
-        "text": "페이몬을 지칭하는 가장 유명한 밈(Meme)이자, 게임 내 선택지에도 자주 등장하는 별명은?",
+        "text": "페이몬을 지칭하는 가장 유명한 밈이자 게임 내 선택지에도 자주 등장하는 별명은?",
         "choices": ["최고의 가이드", "비상식량", "날아다니는 애완동물", "말하는 인형"],
         "answer": 1,
         "category": "genshin"
@@ -3299,13 +3387,13 @@ var QUESTIONS = [
         "category": "genshin"
     },
     {
-        "text": "무기 돌파 소재와 특성 육성 소재를 파밍할 수 있는 비경에서 모든 종류의 소재가 개방되는 요일은?",
+        "text": "무기 돌파 소재와 특성 육성 소재 비경에서 모든 종류의 소재가 개방되는 요일은?",
         "choices": ["월요일", "수요일", "금요일", "일요일"],
         "answer": 3,
         "category": "genshin"
     },
     {
-        "text": "일일 의뢰 4개를 모두 완료하고 모험가 길드의 캐서린에게 보고하면 추가로 받는 원석의 개수는?",
+        "text": "일일 의뢰를 모두 완료하고 모험가 길드의 캐서린에게 보고하면 받는 원석의 개수는?",
         "choices": ["10개", "20개", "40개", "60개"],
         "answer": 1,
         "category": "genshin"
@@ -3335,7 +3423,7 @@ var QUESTIONS = [
         "category": "genshin"
     },
     {
-        "text": "아라타키 이토의 종족으로, 이나즈마에 거주하는 뿔 달린 요괴는?",
+        "text": "아라타키 이토의 종족으로, 이나즈마에 거주하는 뿔 달린 요괴를 칭하는 말은?",
         "choices": ["텐구", "너구리 요괴", "오니", "선인"],
         "answer": 2,
         "category": "genshin"
@@ -3395,7 +3483,7 @@ var QUESTIONS = [
         "category": "genshin"
     },
     {
-        "text": "원신의 슬라임 중, 물 위에 있을 때 얼어붙게 만들어 물 위를 걸어갈 수 있게 해주는 슬라임은?",
+        "text": "원신의 슬라임 중, 물을 얼어붙게 만드는 슬라임은?",
         "choices": ["불 슬라임", "물 슬라임", "얼음 슬라임", "바람 슬라임"],
         "answer": 2,
         "category": "genshin"
@@ -3761,7 +3849,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "밀레니엄 사이언스 스쿨 소속 메이드 부대 'C&C'의 콜사인 00이자 부장인 학생은?",
+        "text": "밀레니엄 사이언스 스쿨 소속 메이드 부대 'C&C'의 부장이자 콜사인이 00인 학생은?",
         "choices": ["네루", "아스나", "카린", "아카네"],
         "answer": 0,
         "category": "bluearchive"
@@ -3773,7 +3861,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "블루 아카이브의 전투 시스템 중, '경장갑' 방어타입의 적에게 가장 큰 피해를 주는 공격 타입은?",
+        "text": "블루 아카이브의 전투에서 '경장갑' 타입 적에게 가장 큰 피해를 주는 공격 타입은?",
         "choices": ["폭발", "관통", "신비", "진동"],
         "answer": 0,
         "category": "bluearchive"
@@ -3821,7 +3909,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "총력전 보스이자, 데카그라마톤의 예언자 중 첫 번째로 등장한 거대한 뱀 형태의 기계 병기는?",
+        "text": "총력전 보스이자, 데카그라마톤의 예언자 중 첫 번째로 등장한 거대한 뱀 형태의 기계는?",
         "choices": ["헤세드", "호드", "케세드", "비나"],
         "answer": 3,
         "category": "bluearchive"
@@ -3839,7 +3927,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "아루가 등장할 때나 뭔가 사건이 터졌을 때 나오는, 블루 아카이브를 대표하는 유쾌한 BGM의 제목은?",
+        "text": "뭔가 사건이 터졌을 때 나오는, 블루 아카이브를 대표하는 유쾌한 BGM의 제목은?",
         "choices": ["Constant Moderato", "Luminous Memory", "Unwelcome School", "RE Aoharu"],
         "answer": 2,
         "category": "bluearchive"
@@ -3977,7 +4065,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "페로로, 스컬맨 등이 속해 있는 블루 아카이브 세계관 내 최고 인기 캐릭터 브랜드의 이름은?",
+        "text": "페로로가 속해 있는, 블루 아카이브 세계관 내 최고 인기 캐릭터 브랜드의 이름은?",
         "choices": ["모모프렌즈", "페로로 앤 프렌즈", "키보토스 프렌즈", "샬레 프렌즈"],
         "answer": 0,
         "category": "bluearchive"
@@ -3989,7 +4077,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "백귀야행 연합학원의 '마츠리운영관리부'의 부장이자 전통 찻집 백야당을 운영하는 학생은?",
+        "text": "백귀야행 연합학원의 '마츠리운영관리부'의 부장이자 백야당을 운영하는 학생은?",
         "choices": ["우미카", "시즈코", "츠바키", "미모리"],
         "answer": 1,
         "category": "bluearchive"
@@ -4001,13 +4089,13 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "총력전 보스 '시로 & 쿠로'가 흑화하기 전 원래 속해 있었던, 키보토스의 버려진 놀이공원 이름은?",
+        "text": "총력전 보스 '시로 & 쿠로'가 흑화하기 전 속해 있었던 버려진 놀이공원의 이름은?",
         "choices": ["모모파크", "슬럼피아", "키보토스 랜드", "데카그라마톤 파크"],
         "answer": 1,
         "category": "bluearchive"
     },
     {
-        "text": "샬레와 키보토스 곳곳의 각종 소식을 발빠르게 전하는 크로노스 스쿨 소속 간판 아나운서의 이름은?",
+        "text": "각종 소식을 발빠르게 전하는 크로노스 스쿨 소속 간판 아나운서의 이름은?",
         "choices": ["마이", "모에", "시논", "아오이"],
         "answer": 2,
         "category": "bluearchive"
@@ -4043,7 +4131,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "스토리 상 플레이어가 거대한 기적을 일으킬 때 사용하는 '어른의 카드'는 무엇이 대가인가?",
+        "text": "스토리 상 플레이어가 거대한 기적을 일으킬 때 사용하는 '어른의 카드'의 대가는?",
         "choices": ["청휘석", "현금", "싯딤의 상자 에너지", "선생님의 시간과 생명"],
         "answer": 3,
         "category": "bluearchive"
@@ -4067,13 +4155,13 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "총력전 '예로니무스'에서 초록색 등불의 체력을 가득 채웠을 때 보스에게 걸리는 디버프 효과는?",
+        "text": "총력전 '예로니무스'에서 초록색 등불의 체력을 다 채웠을 때 보스에게 걸리는 디버프는?",
         "choices": ["공격력 감소", "방어력 감소", "치유력 감소", "회피율 감소"],
         "answer": 1,
         "category": "bluearchive"
     },
     {
-        "text": "총력전 '호드'의 그로기 게이지를 채우기 위해 가장 필수적으로 사용해야 하는 상태이상 효과는?",
+        "text": "총력전 '호드'의 그로기 게이지를 채우기 위해 사용해야 하는 상태이상 효과는?",
         "choices": ["화상, 중독", "방어력 감소", "기절, 공포, 도발", "치명 저항 감소"],
         "answer": 2,
         "category": "bluearchive"
@@ -4127,13 +4215,13 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "총력전 '페로로지라' 에서, 소환된 미니 페로로들에게 광역 피해를 입히면 발생하는 핵심 기믹은?",
+        "text": "총력전 '페로로지라' 에서 미니 페로로들에게 광역 피해를 입히면 발생하는 핵심 기믹은?",
         "choices": ["미니 페로로가 즉사기 시전", "아군의 코스트 회복 정지", "미니 페로로가 받은 데미지가 본체에 전이됨", "보스의 방어력이 일시적으로 크게 상승"],
         "answer": 2,
         "category": "bluearchive"
     },
     {
-        "text": "총력전 '고즈' 2페이즈에서 3체의 고즈가 등장했을 때, 본체를 구별할 수 있는 판별법이 아닌 것은?",
+        "text": "총력전 '고즈' 2페이즈에서 3체의 고즈가 등장했을 때, 본체를 판별하는 방법이 아닌 것은?",
         "choices": ["카드를 섞을 때 붉은 빛이 도는 폭탄을 들고 있는 쪽", "등장 시 이펙트 소리가 다른 쪽", "집중포화 마크가 유지되는 쪽", "가짜와 진짜의 체력바 색상이 다른 쪽"],
         "answer": 3,
         "category": "bluearchive"
@@ -4157,7 +4245,7 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": " 체력이 0이 된 학생이 헬기를 타고 퇴각했을 때, 부대에 즉시 발생하는 페널티는?",
+        "text": "체력이 0이 된 학생이 헬기를 타고 퇴각했을 때, 부대에 즉시 발생하는 페널티는?",
         "choices": ["즉시 게임 오버", "남은 아군의 공격력 영구 감소", "부대 전체의 코스트 회복 속도 감소", "보스의 광폭화"],
         "answer": 2,
         "category": "bluearchive"
