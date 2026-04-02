@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -707,7 +707,8 @@ button { -webkit-tap-highlight-color: transparent; }
             <li>점수가 높으면 <b style="color:#00b894">룰렛 당첨률</b>이 높아집니다!</li>
         </ul>
         <select id="categorySelect" class="category-select">
-            <option value="all" selected>전체</option>
+            <option value="all" selected>주제 선택 : 전체</option>
+            <option value="trivia">일반 상식</option>
             <option value="totalgame">종합 게임</option>
             <option value="genshin">원신</option>
             <option value="bluearchive">블루 아카이브</option>
@@ -814,6 +815,7 @@ var CORRECT_BONUS  = 1;    // 정답 보너스(초)
 var WRONG_PENALTY  = 1;    // 오답 패널티(초)
 
 var CATEGORY_NAMES = {
+    trivia: "일반 상식",
     totalgame: "종합 게임",
     genshin: "원신",
     bluearchive: "블루 아카이브"
@@ -1862,6 +1864,468 @@ document.addEventListener("visibilitychange", function () {
  * ============================================================ */
 var QUESTIONS = [
     {
+        "text": "호주의 수도는?",
+        "choices": ["시드니", "멜버른", "캔버라", "브리즈번"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "태양계에서 가장 큰 행성은?",
+        "choices": ["목성", "토성", "지구", "천왕성"],
+        "answer": 0,
+        "category": "trivia"
+    },
+    {
+        "text": "알파벳 'O'로 표기되는 원소 기호는?",
+        "choices": ["수소", "산소", "질소", "탄소"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "일반적인 성인 인체의 뼈는 총 몇 개인가?",
+        "choices": ["106개", "206개", "306개", "406개"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "조선 시대 훈민정음을 창제한 왕은?",
+        "choices": ["태조", "세종", "영조", "정조"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "세계적인 명화 '모나리자'를 그린 화가는?",
+        "choices": ["빈센트 반 고흐", "파블로 피카소", "레오나르도 다빈치", "클로드 모네"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "희곡 '햄릿', '로미오와 줄리엣'을 쓴 영국의 극작가는?",
+        "choices": ["찰스 디킨스", "윌리엄 셰익스피어", "아서 코난 도일", "조지 오웰"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "지구상에서 가장 넓은 대륙은?",
+        "choices": ["유럽", "북아메리카", "아프리카", "아시아"],
+        "answer": 3,
+        "category": "trivia"
+    },
+    {
+        "text": "세계에서 가장 긴 강은?",
+        "choices": ["아마존강", "나일강", "미시시피강", "양쯔강"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "올림픽을 상징하는 오륜기의 동그라미는 총 몇 개인가?",
+        "choices": ["4개", "5개", "6개", "7개"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "축구 경기에서 한 팀의 선발 출전 인원은 몇 명인가?",
+        "choices": ["9명", "10명", "11명", "12명"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "야구 경기에서 정규 이닝은 몇 개인가?",
+        "choices": ["7이닝", "8이닝", "9이닝", "10이닝"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "포유류 중에서 유일하게 하늘을 '비행'할 수 있는 동물은?",
+        "choices": ["날다람쥐", "박쥐", "타조", "펭귄"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "빛의 3원색에 해당하지 않는 색은?",
+        "choices": ["빨간색", "노란색", "초록색", "파란색"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "클래식 음악계에서 '음악의 어머니'라 불리는 작곡가는?",
+        "choices": ["바흐", "모차르트", "베토벤", "헨델"],
+        "answer": 3,
+        "category": "trivia"
+    },
+    {
+        "text": "특별한 경우가 없다면 1년은 보통 몇 주로 이루어져 있는가?",
+        "choices": ["48주", "50주", "52주", "54주"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "길이의 단위인 1인치(inch)는 약 몇 cm인가?",
+        "choices": ["1.54cm", "2.0cm", "2.54cm", "3.14cm"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "조선 시대 임진왜란이 발발한 연도는?",
+        "choices": ["1492년", "1592년", "1636년", "1894년"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "최초의 한글 소설인 '홍길동전'을 지은 인물은?",
+        "choices": ["허균", "박지원", "김만중", "정약용"],
+        "answer": 0,
+        "category": "trivia"
+    },
+    {
+        "text": "인터넷 주소에 쓰이는 'WWW'는 무엇의 약자인가?",
+        "choices": ["World Wide Web", "World Web Window", "Wide World Web", "Window Wide World"],
+        "answer": 0,
+        "category": "trivia"
+    },
+    {
+        "text": "수요와 공급의 법칙에서 가격이 오르면 일반적으로 수요는 어떻게 되는가?",
+        "choices": ["증가한다", "감소한다", "변화 없다", "공급과 같아진다"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "비타민 C가 부족할 때 나타날 수 있는 대표적인 결핍증은?",
+        "choices": ["구루병", "야맹증", "괴혈병", "각기병"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "미국의 초대 대통령은?",
+        "choices": ["에이브러햄 링컨", "조지 워싱턴", "토머스 제퍼슨", "시어도어 루스벨트"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "일반적인 1기압 상태에서 물이 끓는 온도는 섭씨 몇 도인가?",
+        "choices": ["50도", "80도", "100도", "120도"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "표준 피아노의 건반은 흰 건반과 검은 건반을 합쳐 총 몇 개인가?",
+        "choices": ["61개", "76개", "88개", "97개"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "혈액형 중에서 누구에게나 헌혈할 수 있는 혈액형은?",
+        "choices": ["A형", "B형", "O형", "AB형"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "세계에서 모국어로 사용하는 인구가 가장 많은 언어는?",
+        "choices": ["영어", "스페인어", "중국어", "힌디어"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "지구의 유일한 자연 위성은?",
+        "choices": ["태양", "화성", "달", "금성"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "식물 세포에서 빛에너지를 이용해 광합성을 하는 기관은?",
+        "choices": ["미토콘드리아", "엽록체", "리보솜", "핵"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "원주율을 나타내는 수학 기호는?",
+        "choices": ["α(알파)", "β(베타)", "Σ(시그마)", "π(파이)"],
+        "answer": 3,
+        "category": "trivia"    
+    },  
+    {
+        "text": "한반도에 세워진 우리나라 최초의 국가는?",
+        "choices": ["고구려", "백제", "신라", "고조선"],
+        "answer": 3,
+        "category": "trivia"
+    },
+    {
+        "text": "십이지 중 두 번째에 해당하는 동물은?",
+        "choices": ["소", "호랑이", "쥐", "토끼"],
+        "answer": 0,
+        "category": "trivia"
+    },
+    {
+        "text": "전통 놀이인 윷놀이에서 '모'는 어떤 동물을?",
+        "choices": ["돼지", "개", "소", "말"],
+        "answer": 3,
+        "category": "trivia"
+    },
+    {
+        "text": "하계 올림픽이 개최되는 주기는?",
+        "choices": ["2년", "3년", "4년", "5년"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "김치, 요구르트 등의 발효에 관여하며 장 건강에 도움을 주는 대표적인 세균은?",
+        "choices": ["대장균", "유산균", "살모넬라균", "포도상구균"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "'해바라기', '별이 빛나는 밤' 등의 걸작을 남긴 후기 인상주의 화가는?",
+        "choices": ["폴 고갱", "클로드 모네", "빈센트 반 고흐", "에드가 드가"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "음악 악보에서 '점점 여리게' 연주하라는 의미의 기호는?",
+        "choices": ["크레센도", "디크레센도", "스타카토", "레가토"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "소설 '삼국지'에서 천하를 셋으로 나눈 나라가 아닌 것은?",
+        "choices": ["위", "촉", "오", "진"],
+        "answer": 3,
+        "category": "trivia"
+    },
+    {
+        "text": "후삼국을 통일하고 고려를 건국한 인물은?",
+        "choices": ["궁예", "견훤", "왕건", "이성계"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "대한민국 영토에서 가장 높은 산은?",
+        "choices": ["지리산", "설악산", "한라산", "태백산"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "컴퓨터의 두뇌에 해당하며, 중앙 처리 장치라고도 불리는 부품은?",
+        "choices": ["RAM", "SSD", "GPU", "CPU"],
+        "answer": 3,
+        "category": "trivia"
+    },
+    {
+        "text": "한 나라 안에서 일정 기간 생산된 모든 최종 생산물의 시장 가치를 뜻하는 약자는?",
+        "choices": ["GNP", "GDP", "GNI", "CPI"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "그리스 로마 신화에서 신들의 왕이자 번개를 다루는 최고 신은?",
+        "choices": ["포세이돈", "하데스", "제우스", "아폴론"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "인류 최초로 달 표면에 착륙한 우주선의 이름은?",
+        "choices": ["보이저 1호", "아폴로 11호", "스푸트니크 1호", "챌린저호"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "사람의 치아 중에서 가장 늦게, 보통 사춘기 이후에 나는 치아의 이름은",
+        "choices": ["송곳니", "앞니", "사랑니", "젖니"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "법적으로 만 19세 미만인 사람을 이르는 말은?",
+        "choices": ["청소년", "미성년자", "영유아", "어린이"],
+        "answer": 1,
+        "category": "trivia"
+    },
+        {
+        "text": "세계에서 영토가 가장 작은 나라는 어디일까요?",
+        "choices": ["바티칸 시국", "모나코", "나우루", "투발루"],
+        "answer": 0,
+        "category": "trivia"
+    },
+    {
+        "text": "화학 원소 기호 'Au'가 나타내는 원소는 무엇일까요?",
+        "choices": ["은", "철", "금", "구리"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "대한민국의 영토 중 가장 동쪽에 위치한 섬은 어디일까요?",
+        "choices": ["마라도", "독도", "울릉도", "백령도"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "빛은 1초에 지구를 대략 몇 바퀴 돌 수 있을까요?",
+        "choices": ["5바퀴 반", "6바퀴 반", "7바퀴 반", "8바퀴 반"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "고전 명작 소설 '죄와 벌'을 집필한 러시아의 작가는?",
+        "choices": ["톨스토이", "푸시킨", "체호프", "도스토옙스키"],
+        "answer": 3,
+        "category": "trivia"
+    },
+    {
+        "text": "바닷물에 녹아 있는 염류 중 가장 많은 비율을 차지하며, 짠맛을 내는 주성분은?",
+        "choices": ["염화나트륨", "염화마그네슘", "염화칼슘", "염화암모늄"],
+        "answer": 0,
+        "category": "trivia"
+    },
+    {
+        "text": "윈도우 기준으로, 텍스트나 파일을 복사하기 위해 사용하는 단축키는?",
+        "choices": ["Ctrl + V", "Ctrl + X", "Ctrl + C", "Ctrl + Z"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "인체의 뼈 중에서 가장 길고 튼튼한 뼈는?",
+        "choices": ["정강이뼈", "대퇴골", "척추", "상완골"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "올림픽 육상 종목인 마라톤의 공식 경기 거리는?",
+        "choices": ["40.195km", "41.195km", "42.000km", "42.195km"],
+        "answer": 3,
+        "category": "trivia"
+    },
+    {
+        "text": "대한민국의 국화는?",
+        "choices": ["장미", "진달래", "무궁화", "벚꽃"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "훈민정음 창제와 반포를 기념하는 한글날은 몇 월 며칠일까요?",
+        "choices": ["10월 3일", "10월 9일", "11월 3일", "11월 9일"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "일반적인 곤충의 다리는 총 몇 쌍일까요?",
+        "choices": ["2쌍 (4개)", "3쌍 (6개)", "4쌍 (8개)", "5쌍 (10개)"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "태극기의 네 모서리에 있는 4괘는 건, 곤, 감, 그리고 무엇일까요?",
+        "choices": ["이(리)", "태", "진", "손"],
+        "answer": 0,
+        "category": "trivia"
+    },
+    {
+        "text": "해발 고도를 기준으로 세계에서 가장 높은 산은 무엇일까요?",
+        "choices": ["K2", "킬리만자로산", "에베레스트산", "안나푸르나"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "미합중국의 공식 수도는 어디일까요?",
+        "choices": ["뉴욕", "워싱턴 D.C.", "로스앤젤레스", "시카고"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "정상적인 사람의 체세포에 들어있는 염색체의 총 개수는?",
+        "choices": ["23개", "44개", "46개", "48개"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "표준 88건반 피아노에서 검은 건반의 개수는?",
+        "choices": ["32개", "36개", "40개", "52개"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "지구상에서 가장 수심이 깊은 해구(Trench)의 이름은?",
+        "choices": ["마리아나 해구", "통가 해구", "필리핀 해구", "페루-칠레 해구"],
+        "answer": 0,
+        "category": "trivia"
+    },
+    {
+        "text": "물을 구성하는 두 가지 원소는 산소와 무엇인가?",
+        "choices": ["질소", "탄소", "헬륨", "수소"],
+        "answer": 3,
+        "category": "trivia"
+    },
+    {
+        "text": "대한민국 헌법 제1조 1항, '대한민국은 민주 (OOO)이다.' 빈칸에 들어갈 말은?",
+        "choices": ["합중국", "공화국", "자유국", "법치국"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "빛의 3원색을 각각 같은 비율로 합치면 되는 색은?",
+        "choices": ["검은색", "회색", "갈색", "흰색"],
+        "answer": 3,
+        "category": "trivia"
+    },
+    {
+        "text": "조선 시대 백성들의 억울한 일을 해결해 주기 위해 설치한 북의 이름은?",
+        "choices": ["자격루", "신문고", "앙부일구", "혼천의"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "태양계 행성 중에서 가장 크고 뚜렷한 고리를 가지고 있는 행성은?",
+        "choices": ["목성", "천왕성", "토성", "해왕성"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "대한민국의 5만원 지폐에 그려진 인물은?",
+        "choices": ["세종대왕", "퇴계 이황", "율곡 이이", "신사임당"],
+        "answer": 3,
+        "category": "trivia"
+    },
+    {
+        "text": "소설 '해리 포터' 시리즈에서 주인공 해리 포터의 이마에 있는 흉터의 모양은?",
+        "choices": ["번개 무늬", "초승달 무늬", "별 무늬", "십자가 무늬"],
+        "answer": 0,
+        "category": "trivia"
+    },
+    {
+        "text": "컴퓨터의 데이터 용량 단위에서 1바이트는 몇 비트인가?",
+        "choices": ["2비트", "4비트", "8비트", "16비트"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "세계적인 테너 가수 중 한 명인 루치아노 파바로티의 국적은?",
+        "choices": ["프랑스", "스페인", "이탈리아", "독일"],
+        "answer": 2,
+        "category": "trivia"
+    },
+    {
+        "text": "식물이 빛 에너지를 이용하여 이산화탄소와 물로부터 양분을 합성하는 과정은?",
+        "choices": ["호흡", "광합성", "증산 작용", "수정"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "인체에서 침묵의 장기라고 불리는 장기는?",
+        "choices": ["심장", "간", "폐", "신장"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "세계에서 가장 긴 강은?",
+        "choices": ["아마존 강", "나일 강", "양쯔 강", "미시시피 강"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
+        "text": "지구의 대기 중에서 가장 많은 비율을 차지하는 기체는?",
+        "choices": ["산소", "질소", "이산화탄소", "아르곤"],
+        "answer": 1,
+        "category": "trivia"
+    },
+    {
         "text": "'젤다의 전설' 시리즈에서 맨날 구르면서 항아리를 깨고 다니는 '초록색 옷 입은 애'의 이름은?",
         "choices": ["젤다", "링크", "루이지", "피터팬"],
         "answer": 1,
@@ -2414,7 +2878,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "'아이돌마스터' 시리즈에서 아마미 하루카, 키사라기 치하야 등의 아이돌들이 소속된 프로덕션의 이름은?",
+        "text": "'아이돌마스터' 시리즈에서 아마미 하루카, 키사라기 치하야 등이 소속된 프로덕션의 이름은?",
         "choices": ["346 프로덕션", "283 프로덕션", "765 프로덕션", "315 프로덕션"],
         "answer": 2,
         "category": "totalgame"
@@ -2836,6 +3300,306 @@ var QUESTIONS = [
     {
         "text": "원신의 슬라임 중, 물 위에 있을 때 얼어붙게 만들어 물 위를 걸어갈 수 있게 해주는 슬라임은?",
         "choices": ["불 슬라임", "물 슬라임", "얼음 슬라임", "바람 슬라임"],
+        "answer": 2,
+        "category": "genshin"
+    },
+    {
+        "text": "폰타인의 최고 심판관 느비예트의 진정한 정체는 무엇인가?",
+        "choices": ["물의 신", "물의 용왕", "우인단 집행관", "천리의 주관자"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "푸리나가 강공격을 통해 전환할 수 있는 아르케의 힘은?",
+        "choices": ["빛과 어둠", "프뉴마와 우시아", "정의와 심판", "상승과 하강"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "나비아가 원소 전투 스킬을 사용할 때 사용하는 '우산'의 실제 정체는?",
+        "choices": ["지팡이", "총포", "대검", "마법 지팡이"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "폰타인의 메로피드 요새의 관리자이자 얼음 원소 법구 캐릭터인 인물은?",
+        "choices": ["라이오슬리", "프레미네", "느비예트", "클로린드"],
+        "answer": 0,
+        "category": "genshin"
+    },
+    {
+        "text": "벽난로의 집의 아이들이 '아를레키노'를 부르는 호칭은?",
+        "choices": ["어머니", "아버지", "선생님", "대장님"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "시그윈의 종족은 무엇인가?",
+        "choices": ["선인", "인간", "용족", "멜뤼진"],
+        "answer": 3,
+        "category": "genshin"
+    },
+    {
+        "text": "클로린드가 원소 전투 스킬을 사용한 후 일반 공격을 하면 클로린드에게 부여되는 효과는?",
+        "choices": ["생명의 계약", "피의 갈증", "정의의 결투", "원소의 파도"],
+        "answer": 0,
+        "category": "genshin"
+    },
+    {
+        "text": "에밀리가 원소 전투 스킬을 사용하면 필드에 설치되는 물건은?",
+        "choices": ["꽃다발", "향수병", "폭탄", "함정"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "나타 지역의 메인 기믹으로, 용의 힘을 빌려 이동하거나 전투하는 시스템의 이름은?",
+        "choices": ["강림", "빙의", "조련", "포획"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "불의 신 마비카가 원소 폭발을 사용하면 타게 되는 것은?",
+        "choices": ["서핑보드", "오토바이", "열기구", "용"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "말라니가 사용하는 수상 이동 수단은 무엇인가?",
+        "choices": ["직접 헤엄친다", "서핑보드", "돌고래", "수상스키"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "키니치와 함께 다니는 입이 험한 동료의 이름은?",
+        "choices": ["페이몬", "아쥬", "쿠쿠", "바오"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "카치나가 타고 다니며, 탄 상태로 절벽을 올라갈 수도 있는 탈것의 이름은?",
+        "choices": ["쌩쌩이", "붕붕이", "낄낄이", "씽씽이"],
+        "answer": 0,
+        "category": "genshin"
+    },
+    {
+        "text": "나타 소속 캐릭터들에게만 존재하는 특수 게이지의 이름은?",
+        "choices": ["밤혼", "태양의 힘", "대지의 기운", "불의 의지"],
+        "answer": 0,
+        "category": "genshin"
+    },
+    {
+        "text": "실로닌이 나타에서 수행하는 역할은 무엇인가?",
+        "choices": ["요리사", "대장장이", "아이돌", "기사"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "실로닌이 원소스킬을 사용하면 장착하게 되는 신발의 형태는?",
+        "choices": ["등산화", "인라인 스케이트", "발레 슈즈", "군화"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "차스카는 원소스킬을 사용하면 공중에 떠서 무엇을 타고 공격하는가?",
+        "choices": ["용", "비행선", "총 모양의 전용 탈것", "구름"],
+        "answer": 2,
+        "category": "genshin"
+    },
+    {
+        "text": "폰타인의 기자로, 카메라를 무기 삼아 공격하는 캐릭터의 이름은?",
+        "choices": ["샤를로트", "에밀리", "치오리", "슈브르즈"],
+        "answer": 0,
+        "category": "genshin"
+    },
+    {
+        "text": "슈브르즈는 파티의 속성이 어떻게 구성되어 있을 때 강력한 버프를 제공하는가?",
+        "choices": ["물-번개", "불-번개", "풀-번개", "바위-번개"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "이나즈마 출신이지만 폰타인에서 패션 디자이너로 활동하는 캐릭터는?",
+        "choices": ["요이미야", "치오리", "아야카", "키라라"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "폰타인의 특별 형사국 대장으로, 과부하 파티의 키 서포터 캐릭터는?",
+        "choices": ["클로린드", "슈브르즈", "샤를로트", "나비아"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "나타의 용들 중 하늘을 날아다닐 수 있는 용의 이름은?",
+        "choices": ["비룡", "익룡", "깃룡", "조룡"],
+        "answer": 2,
+        "category": "genshin"
+    },
+    {
+        "text": "나타 캐릭터끼리 교체했을 때 나타 지역 한정으로 발동되는 시스템은?",
+        "choices": ["무한 달리기", "밤혼 전달", "자동 아이템 줍기", "낙하 데미지 무효"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "폰타인 심판의 상징이자, 정의를 상징하는 물건의 이름은?",
+        "choices": ["정의의 저울", "자동 판결 기계", "계시 판결 장치", "프뉴마 엔진"],
+        "answer": 2,
+        "category": "genshin"
+    },
+    {
+        "text": "키니치가 이동 시 갈고리 로프를 걸어 공중을 이동하는 방식의 모티브는?",
+        "choices": ["번지점프", "그래플링 훅", "텔레포트", "비행"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "폰타인의 물 정령들이 인간으로 변하게 된 근본적인 원인은 무엇인가?",
+        "choices": ["신비한 물약", "에게리아의 원죄", "푸리나의 마법", "천리의 명령"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "마비카와 대립하며 등장한 우인단 집행관의 이름은?",
+        "choices": ["카피타노", "타르탈리아", "시뇨라", "풀치넬라"],
+        "answer": 0,
+        "category": "genshin"
+    },
+        {
+        "text": "원신 6.0 버전을 기점으로 변경된 게임 타이틀의 이름은?",
+        "choices": ["원신•달의 노래", "원신•공월의 노래", "원신•심연의 노래", "원신•백야의 노래"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "노드크라이의 공식적인 국가적 지위는?",
+        "choices": ["독립 국가", "폰타인의 식민지", "스네즈나야의 자치 구역", "지하 왕국"],
+        "answer": 2,
+        "category": "genshin"
+    },
+    {
+        "text": "다음 중 노드크라이 출신 캐릭터가 아닌 사람은?",
+        "choices": ["라우마", "플린스", "카치나", "아이노"],
+        "answer": 2,
+        "category": "genshin"
+    },
+    {
+        "text": "노드크라이가 추가되면서 새롭게 도입된 파티 보너스 효과의 이름은 무엇일까요?",
+        "choices": ["달의 가호", "극야의 환상", "백야의 축복", "달빛 징조"],
+        "answer": 3,
+        "category": "genshin"
+    },
+    {
+        "text": "노드크라이 지역에서 기믹을 풀기 위해 활용되는 생물의 이름은?",
+        "choices": ["수정 나비", "자력 달팽이", "얼음 슬라임", "멧돼지"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "공월의 노래 제 8막의 제목은?",
+        "choices": ["극북의 야행시", "진실의 달", "귀로", "어느 겨울밤, 한 여행자"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "아이노가 다루는 무기와 원소 속성이 맞게 매치된 것은?",
+        "choices": ["물 - 양손검", "번개 - 양손검", "물 - 한손검", "얼음 - 양손검"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "아이노가 만들어낸 로봇 캐릭터의 이름은?",
+        "choices": ["플린스", "이네파", "라우마", "아이노"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "이네파의 원소 속성은?",
+        "choices": ["얼음", "물", "번개", "풀"],
+        "answer": 2,
+        "category": "genshin"
+    },
+    {
+        "text": "이네파가 소환하는 스마트 보조 유닛의 이름은?",
+        "choices": ["비르지타", "아이노", "오즈", "쌩쌩이"],
+        "answer": 0,
+        "category": "genshin"
+    },
+    {
+        "text": "이네파가 원소 폭발을 사용하면 파티원에게 추가적으로 제공되는 버프는?",
+        "choices": ["체력 회복", "보호막 부여", "피해 감소", "원소 내성 증가"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "우인단 집행관 제3위이자 노드크라이 스토리의 주역인 '콜롬비나'의 원소 속성은?",
+        "choices": ["얼음 원소", "바람 원소", "풀 원소", "물 원소"],
+        "answer": 3,
+        "category": "genshin"
+    },
+    {
+        "text": "콜롬비나의 풀네임은 무엇일까요?",
+        "choices": ["콜롬비나 노드크라이", "콜롬비나 스네즈나야", "콜롬비나 하이포셀레니아", "콜롬비나 디 루미네"],
+        "answer": 2,
+        "category": "genshin"
+    },
+    {
+        "text": "플린스가 주로 활약하는 포지션과 원소 속성은?",
+        "choices": ["번개 원소 온필드 딜러", "물 원소 서포터", "얼음 원소 서포터", "번개 원소 오프필드 딜러"],
+        "answer": 0,
+        "category": "genshin"
+    },
+    {
+        "text": "네페르의 원소 속성은?",
+        "choices": ["바위", "불", "풀", "얼음"],
+        "answer": 2,
+        "category": "genshin"
+    },
+    {
+        "text": "비밀의 집에서 네페르의 조수로 일하고 있는 캐릭터의 이름은?",
+        "choices": ["아이노", "야호다", "일루가", "이네파"],
+        "answer": 1,
+        "category": "genshin"
+    },
+    {
+        "text": "야호다가 전투 시 사용하는 무기와 원소 속성의 조합은?",
+        "choices": ["바람 - 활", "물 - 법구", "번개 - 한손검", "바람 - 법구"],
+        "answer": 0,
+        "category": "genshin"
+    },
+    {
+        "text": "라우마의 원소 스킬이 감소시키는 두 가지 원소 내성은?",
+        "choices": ["풀, 번개", "불, 얼음", "풀, 물", "바람, 바위"],
+        "answer": 2,
+        "category": "genshin"
+    },
+    {
+        "text": "노드크라이 지역 필드 곳곳에 존재하며 플레이어의 길을 안내하는 영혼의 이름은?",
+        "choices": ["은빛 부엉이", "극지의 메아리", "별의 영혼", "월령"],
+        "answer": 3,
+        "category": "genshin"
+    },
+    {
+        "text": "일곱 신을 모시는 다른 국가들과 달리, 노드크라이 지역의 '서리달 아이' 신앙은 근본적으로 무엇을 섬기고 있을까요?",
+        "choices": ["심연의 왕", "천리의 주관자", "달의 신", "시간의 마신"],
+        "answer": 2,
+        "category": "genshin"
+    },
+    {
+        "text": "이네파 캐릭터 PV 영상의 제목은 무엇일까요?",
+        "choices": ["고철의 반란", "달빛 아래의 로봇", "기(계)적인 선물", "차가운 심장, 따뜻한 마음"],
+        "answer": 2,
+        "category": "genshin"
+    },
+    {
+        "text": "콜롬비나가 사용하는 무기의 종류는?",
+        "choices": ["활", "한손검", "법구", "양손검"],
+        "answer": 2,
+        "category": "genshin"
+    },
+    {
+        "text": "야호다의 원소 스킬인 '그림자 추적'로 야호다에게 부여되는 효과는?",
+        "choices": ["빠른 이동 속도", "공격 100% 회피", "경직 저항 증가", "무적 상태"],
         "answer": 2,
         "category": "genshin"
     },
@@ -3366,7 +4130,7 @@ var QUESTIONS = [
         "choices": ["하누마 마코토", "시라스 아즈사", "아마우 아코", "사이바 모모이"],
         "answer": 3,
         "category": "bluearchive"
-    }    
+    },
 ];
 
 // BGM은 게임 시작 시 첫 문제와 함께 재생
