@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -101,6 +101,35 @@ button { -webkit-tap-highlight-color: transparent; }
     border-radius: 50%;
     background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 72%);
 }
+.fever-chara-layer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+    perspective: 800px;
+}
+.fever-chara {
+    position: absolute;
+    bottom: 0px;
+    width: 62px;
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.72) rotateY(0deg);
+    transform-origin: center bottom;
+    filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.35));
+    will-change: transform, opacity;
+}
+.fever-chara.left-1 { left: 6px; --amp: 26px; --dur: 2.02s; --delay: 0.02s; }
+.fever-chara.left-2 { left: 56px; --amp: 20px; --dur: 1.85s; --delay: 0.12s; }
+.fever-chara.right-1 { right: 56px; --amp: 22px; --dur: 1.94s; --delay: 0.06s; }
+.fever-chara.right-2 { right: 6px; --amp: 28px; --dur: 2.11s; --delay: 0.16s; }
+#quizScreen.fever-mode .fever-chara {
+    animation:
+        feverCharaPop 0.52s cubic-bezier(0.2, 0.9, 0.25, 1.25) both,
+        feverCharaHopSpin var(--dur, 1.98s) ease-in-out 0.5s infinite;
+    animation-delay: var(--delay, 0s), calc(0.5s + var(--delay, 0s));
+    opacity: 1;
+}
 @keyframes feverGlowA {
     0%   { filter: hue-rotate(0deg); }
     100% { filter: hue-rotate(360deg); }
@@ -116,6 +145,61 @@ button { -webkit-tap-highlight-color: transparent; }
 @keyframes feverTwinkle {
     0%, 100% { opacity: 0; transform: scale(0.6); }
     50% { opacity: 1; transform: scale(1.2); }
+}
+@keyframes feverCharaPop {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 110px, 0) scale(0.5) rotateY(-120deg);
+    }
+    72% {
+        opacity: 1;
+        transform: translate3d(0, -18px, 0) scale(1.03) rotateY(10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1) rotateY(0deg);
+    }
+}
+@keyframes feverCharaHopSpin {
+    0% {
+        transform: translate3d(0, 0, 0) rotateY(0deg) scale(1);
+    }
+    8% {
+        transform: translate3d(0, calc(var(--amp, 24px) * -0.95), 0) rotateY(0deg) scale(1.04);
+    }
+    16% {
+        transform: translate3d(0, 0, 0) rotateY(0deg) scale(1);
+    }
+    24% {
+        transform: translate3d(0, calc(var(--amp, 24px) * -0.9), 0) rotateY(0deg) scale(1.03);
+    }
+    32% {
+        transform: translate3d(0, 0, 0) rotateY(0deg) scale(1);
+    }
+    45% {
+        transform: translate3d(0, calc(var(--amp, 24px) * -1), 0) rotateY(240deg) scale(1.05);
+    }
+    50% {
+        transform: translate3d(0, calc(var(--amp, 24px) * -0.55), 0) rotateY(500deg) scale(1.02);
+    }
+    56% {
+        transform: translate3d(0, 0, 0) rotateY(720deg) scale(1);
+    }
+    68% {
+        transform: translate3d(0, calc(var(--amp, 24px) * -0.92), 0) rotateY(720deg) scale(1.03);
+    }
+    76% {
+        transform: translate3d(0, 0, 0) rotateY(720deg) scale(1);
+    }
+    88% {
+        transform: translate3d(0, calc(var(--amp, 24px) * -1), 0) rotateY(960deg) scale(1.05);
+    }
+    94% {
+        transform: translate3d(0, calc(var(--amp, 24px) * -0.52), 0) rotateY(1220deg) scale(1.02);
+    }
+    100% {
+        transform: translate3d(0, 0, 0) rotateY(1440deg) scale(1);
+    }
 }
 
 /* ── Screen Toggle ── */
@@ -208,7 +292,7 @@ button { -webkit-tap-highlight-color: transparent; }
 }
 
 .quiz-area {
-    height: 420px;
+    height: 510px;
     padding: 15px 15px 30px 15px;
     display: flex;
     flex-direction: column;
@@ -418,7 +502,7 @@ button { -webkit-tap-highlight-color: transparent; }
 }
 
 /* 타이머 */
-.timer-section { margin-top: auto; }
+.timer-section { margin-top: 0px; }
 .timer-info {
     display: flex;
     justify-content: space-between;
@@ -487,6 +571,16 @@ button { -webkit-tap-highlight-color: transparent; }
     color: rgba(255,255,255,0.15);
     font-size: 13px;
     flex-shrink: 0;
+}
+.fever-top-stage {
+    width: 100%;
+    height: 90px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    flex-shrink: 0;
+    pointer-events: none;
+    z-index: 5;
 }
 
 /* ============================================================
@@ -748,6 +842,14 @@ button { -webkit-tap-highlight-color: transparent; }
                 </div>
                 <div class="timer-bar-bg">
                     <div class="timer-bar-fill" id="timerBar"></div>
+                </div>
+            </div>
+            <div class="fever-top-stage" aria-hidden="true">
+                <div class="fever-chara-layer">
+                    <img class="fever-chara left-1" src="asset/chara_1.png" alt="">
+                    <img class="fever-chara left-2" src="asset/chara_2.png" alt="">
+                    <img class="fever-chara right-1" src="asset/chara_3.png" alt="">
+                    <img class="fever-chara right-2" src="asset/chara_4.png" alt="">
                 </div>
             </div>
         </div>
@@ -1131,6 +1233,7 @@ function setFeverMode(enabled) {
     var isOn = !!enabled && $quizScreen.classList.contains("active") && !gameOver;
     var quizArea = $quizScreen.querySelector(".quiz-area");
     if (quizArea) quizArea.classList.toggle("fever-mode", isOn);
+    $quizScreen.classList.toggle("fever-mode", isOn);
 }
 
 function emitComboSparkles(isGold) {
@@ -2098,12 +2201,6 @@ var QUESTIONS = [
         "category": "trivia"
     },
     {
-        "text": "대한민국 영토에서 가장 높은 산은?",
-        "choices": ["지리산", "설악산", "한라산", "태백산"],
-        "answer": 2,
-        "category": "trivia"
-    },
-    {
         "text": "컴퓨터의 두뇌에 해당하며, 중앙 처리 장치라고도 불리는 부품은?",
         "choices": ["RAM", "SSD", "GPU", "CPU"],
         "answer": 3,
@@ -2140,25 +2237,25 @@ var QUESTIONS = [
         "category": "trivia"
     },
         {
-        "text": "세계에서 영토가 가장 작은 나라는 어디일까요?",
+        "text": "세계에서 영토가 가장 작은 나라는?",
         "choices": ["바티칸 시국", "모나코", "나우루", "투발루"],
         "answer": 0,
         "category": "trivia"
     },
     {
-        "text": "화학 원소 기호 'Au'가 나타내는 원소는 무엇일까요?",
+        "text": "화학 원소 기호 'Au'가 나타내는 원소는?",
         "choices": ["은", "철", "금", "구리"],
         "answer": 2,
         "category": "trivia"
     },
     {
-        "text": "대한민국의 영토 중 가장 동쪽에 위치한 섬은 어디일까요?",
+        "text": "대한민국의 영토 중 가장 동쪽에 위치한 섬은?",
         "choices": ["마라도", "독도", "울릉도", "백령도"],
         "answer": 1,
         "category": "trivia"
     },
     {
-        "text": "빛은 1초에 지구를 대략 몇 바퀴 돌 수 있을까요?",
+        "text": "빛은 1초에 지구를 대략 몇 바퀴 도는가?",
         "choices": ["5바퀴 반", "6바퀴 반", "7바퀴 반", "8바퀴 반"],
         "answer": 2,
         "category": "trivia"
@@ -2200,31 +2297,31 @@ var QUESTIONS = [
         "category": "trivia"
     },
     {
-        "text": "훈민정음 창제와 반포를 기념하는 한글날은 몇 월 며칠일까요?",
+        "text": "훈민정음 창제와 반포를 기념하는 한글날은 몇 월?",
         "choices": ["10월 3일", "10월 9일", "11월 3일", "11월 9일"],
         "answer": 1,
         "category": "trivia"
     },
     {
-        "text": "일반적인 곤충의 다리는 총 몇 쌍일까요?",
+        "text": "일반적인 곤충의 다리는 총 몇 개인가?",
         "choices": ["2쌍 (4개)", "3쌍 (6개)", "4쌍 (8개)", "5쌍 (10개)"],
         "answer": 1,
         "category": "trivia"
     },
     {
-        "text": "태극기의 네 모서리에 있는 4괘는 건, 곤, 감, 그리고 무엇일까요?",
+        "text": "태극기의 네 모서리에 있는 4괘는 건, 곤, 감, 그리고?",
         "choices": ["이(리)", "태", "진", "손"],
         "answer": 0,
         "category": "trivia"
     },
     {
-        "text": "해발 고도를 기준으로 세계에서 가장 높은 산은 무엇일까요?",
+        "text": "해발 고도를 기준으로 세계에서 가장 높은 산은?",
         "choices": ["K2", "킬리만자로산", "에베레스트산", "안나푸르나"],
         "answer": 2,
         "category": "trivia"
     },
     {
-        "text": "미합중국의 공식 수도는 어디일까요?",
+        "text": "미합중국의 공식 수도는?",
         "choices": ["뉴욕", "워싱턴 D.C.", "로스앤젤레스", "시카고"],
         "answer": 1,
         "category": "trivia"
@@ -2902,7 +2999,7 @@ var QUESTIONS = [
         "category": "totalgame"
     },
     {
-        "text": "거스트의 RPG '아틀리에' 시리즈에서 게임 진행의 핵심이 되는 시스템이자 주인공들의 주된 직업은?",
+        "text": "거스트의 RPG '아틀리에' 시리즈 주인공들의 주된 직업은?",
         "choices": ["대장장이", "연금술사", "정령사", "마법사"],
         "answer": 1,
         "category": "totalgame"
@@ -3484,7 +3581,7 @@ var QUESTIONS = [
         "category": "genshin"
     },
     {
-        "text": "노드크라이가 추가되면서 새롭게 도입된 파티 보너스 효과의 이름은 무엇일까요?",
+        "text": "노드크라이가 추가되면서 새롭게 도입된 파티 보너스 효과의 이름은?",
         "choices": ["달의 가호", "극야의 환상", "백야의 축복", "달빛 징조"],
         "answer": 3,
         "category": "genshin"
@@ -3509,7 +3606,7 @@ var QUESTIONS = [
     },
     {
         "text": "아이노가 만들어낸 로봇 캐릭터의 이름은?",
-        "choices": ["플린스", "이네파", "라우마", "아이노"],
+        "choices": ["플린스", "이네파", "라우마", "네페르"],
         "answer": 1,
         "category": "genshin"
     },
@@ -3533,12 +3630,12 @@ var QUESTIONS = [
     },
     {
         "text": "우인단 집행관 제3위이자 노드크라이 스토리의 주역인 '콜롬비나'의 원소 속성은?",
-        "choices": ["얼음 원소", "바람 원소", "풀 원소", "물 원소"],
+        "choices": ["얼음", "바람", "풀", "물"],
         "answer": 3,
         "category": "genshin"
     },
     {
-        "text": "콜롬비나의 풀네임은 무엇일까요?",
+        "text": "콜롬비나의 풀네임은?",
         "choices": ["콜롬비나 노드크라이", "콜롬비나 스네즈나야", "콜롬비나 하이포셀레니아", "콜롬비나 디 루미네"],
         "answer": 2,
         "category": "genshin"
@@ -3580,13 +3677,13 @@ var QUESTIONS = [
         "category": "genshin"
     },
     {
-        "text": "일곱 신을 모시는 다른 국가들과 달리, 노드크라이 지역의 '서리달 아이' 신앙은 근본적으로 무엇을 섬기고 있을까요?",
+        "text": "노드크라이 지역의 '서리달 아이' 세력이 섬기는 신은?",
         "choices": ["심연의 왕", "천리의 주관자", "달의 신", "시간의 마신"],
         "answer": 2,
         "category": "genshin"
     },
     {
-        "text": "이네파 캐릭터 PV 영상의 제목은 무엇일까요?",
+        "text": "이네파 캐릭터 PV 영상의 제목은?",
         "choices": ["고철의 반란", "달빛 아래의 로봇", "기(계)적인 선물", "차가운 심장, 따뜻한 마음"],
         "answer": 2,
         "category": "genshin"
@@ -3598,7 +3695,7 @@ var QUESTIONS = [
         "category": "genshin"
     },
     {
-        "text": "야호다의 원소 스킬인 '그림자 추적'로 야호다에게 부여되는 효과는?",
+        "text": "야호다의 원소 스킬인 '그림자 추적'으로 야호다에게 부여되는 효과는?",
         "choices": ["빠른 이동 속도", "공격 100% 회피", "경직 저항 증가", "무적 상태"],
         "answer": 2,
         "category": "genshin"
@@ -3874,8 +3971,8 @@ var QUESTIONS = [
         "category": "bluearchive"
     },
     {
-        "text": "메인 스토리 최종편에 등장하는 평행 세계의 선생님 '프레나파테스'의 곁을 지키던 AI의 이름은?",
-        "choices": ["케이", "데카그라마톤", "프라나", "아로나"],
+        "text": "평행 세계의 선생님 '프레나파테스'의 곁을 지키던 AI의 이름은?",
+        "choices": ["케이", "아리스", "프라나", "아로나"],
         "answer": 2,
         "category": "bluearchive"
     },
